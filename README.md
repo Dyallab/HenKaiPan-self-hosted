@@ -42,7 +42,7 @@ The app runs in **free mode** without a license key — no time limit. Features 
 - Findings triage, SLA tracking, vulnerability inventory
 - Webhooks
 
-For paid features (scheduling, policies, compliance, AI remediation, integrations), request a license key at **sales@henkaipan.dev**.
+For paid features (scheduling, policies, compliance, AI remediation, integrations), request a license key at **sales@dyallab.com.ar**.
 
 ## Updating
 
