@@ -11,15 +11,22 @@ Application Security Posture Management platform. Self-hosted edition.
 ## Quickstart
 
 ```bash
-# 1. Configure
-cp .env.example .env
-# Edit .env: set JWT_SECRET, SECRET_ENCRYPTION_KEY, ADMIN_PASS
+# 1. Run the installer (checks prerequisites, generates secrets)
+./install.sh
 
 # 2. Start
 docker compose up -d
 
 # 3. Open http://localhost:8080
-#    Login with admin / <ADMIN_PASS>
+#    Login with admin / <your password>
+```
+
+### Manual setup (without install.sh)
+
+```bash
+cp .env.example .env
+# Edit .env: set JWT_SECRET, SECRET_ENCRYPTION_KEY, ADMIN_PASS
+docker compose up -d
 ```
 
 ## Configuration
