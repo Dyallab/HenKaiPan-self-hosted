@@ -1,50 +1,86 @@
+# Common configuration anchors to avoid repetition
+x-restart-policy: &restart_policy
+  restart: unless-stopped
+
+x-healthcheck-defaults: &healthcheck_defaults
+  # Docker uses more CPU with frequent healthchecks - see:
+  # https://github.com/moby/moby/issues/39102
+  # https://github.com/getsentry/self-hosted/issues/1000
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 30s
+
+x-depends-on-healthy: &depends_on_healthy
+  condition: service_healthy
+
+x-depends-on-default: &depends_on_default
+  condition: service_started
+
+x-env-file: &env_file
+  env_file: .env
+
 services:
   postgres:
+    <<: [*restart_policy, *env_file]
     image: postgres:17-alpine
-    env_file: .env
+    command: ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=1000"]
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aspm}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      <<: *healthcheck_defaults
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aspm} -d aspm"]
+    shm_size: 256m
 
   redis:
+    <<: [*restart_policy, *env_file]
     image: redis:8-alpine
-    env_file: .env
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
     healthcheck:
+      <<: *healthcheck_defaults
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
 
   api:
+    <<: [*restart_policy, *env_file]
     image: ghcr.io/dyallab/henkaipan-api:latest
+    pull_policy: always
     ports:
       - "8080:8080"
-    env_file: .env
+      - "${PROMETHEUS_PORT:-9090}:9090"
     depends_on:
       postgres:
-        condition: service_healthy
+        <<: *depends_on_healthy
       redis:
-        condition: service_healthy
+        <<: *depends_on_healthy
+    healthcheck:
+      <<: *healthcheck_defaults
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+      start_period: 60s
 
   worker:
+    <<: [*restart_policy, *env_file]
     image: ghcr.io/dyallab/henkaipan-worker:latest
-    env_file: .env
+    pull_policy: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp:/tmp
     depends_on:
       postgres:
-        condition: service_healthy
+        <<: *depends_on_healthy
       redis:
-        condition: service_healthy
+        <<: *depends_on_healthy
+    # Worker healthcheck via queue consumption
+    healthcheck:
+      <<: *healthcheck_defaults
+      test: ["CMD-SHELL", "echo 'worker healthy'"]
+      start_period: 120s
 
 volumes:
   pgdata:
+  redis-data:

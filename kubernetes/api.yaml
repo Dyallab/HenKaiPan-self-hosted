@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: henkaipan
+  labels:
+    app: henkaipan-api
+    app.kubernetes.io/name: henkaipan
+    app.kubernetes.io/component: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: henkaipan-api
+  template:
+    metadata:
+      labels:
+        app: henkaipan-api
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/dyallab/henkaipan-api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9090
+              name: metrics
+          envFrom:
+            - configMapRef:
+                name: henkaipan-config
+            - secretRef:
+                name: henkaipan-secrets
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: henkaipan-api
+  namespace: henkaipan
+  labels:
+    app: henkaipan-api
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+    - port: 9090
+      targetPort: 9090
+      name: metrics
+  selector:
+    app: henkaipan-api
+  type: ClusterIP

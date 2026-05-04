@@ -1,0 +1,279 @@
+# HenKaiPan ASPM - All-in-One Kubernetes Deployment
+# 
+# Quick deployment (for testing only - not production):
+#   kubectl apply -f kubernetes/all-in-one.yaml
+#
+# For production, use individual manifests with proper configuration.
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: henkaipan
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: henkaipan-config
+  namespace: henkaipan
+data:
+  PORT: "8080"
+  PROMETHEUS_PORT: "9090"
+  DATABASE_URL: "postgres://aspm:aspm@postgres:5432/aspm?sslmode=disable"
+  REDIS_ADDR: "redis:6379"
+  CORS_ALLOWED_ORIGINS: "http://localhost:4321,http://localhost:4322"
+  COOKIE_SECURE: "false"
+  OLLAMA_URL: "http://ollama:11434"
+  OLLAMA_MODEL: "gemma4:e4b"
+  AI_SUMMARY_PROVIDER: "ollama"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: henkaipan-secrets
+  namespace: henkaipan
+type: Opaque
+stringData:
+  JWT_SECRET: "change-this-to-a-random-string-min-32-chars"
+  SECRET_ENCRYPTION_KEY: "change-this-to-a-64-character-hex-string-0123456789abcdef"
+  ADMIN_PASS: "admin"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: henkaipan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: aspm
+            - name: POSTGRES_PASSWORD
+              value: aspm
+            - name: POSTGRES_DB
+              value: aspm
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "aspm"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "aspm"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: henkaipan
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: henkaipan
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: henkaipan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:8-alpine
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: henkaipan
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: henkaipan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: henkaipan-api
+  template:
+    metadata:
+      labels:
+        app: henkaipan-api
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/dyallab/henkaipan-api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9090
+              name: metrics
+          envFrom:
+            - configMapRef:
+                name: henkaipan-config
+            - secretRef:
+                name: henkaipan-secrets
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: henkaipan-api
+  namespace: henkaipan
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      name: http
+    - port: 9090
+      targetPort: 9090
+      nodePort: 30090
+      name: metrics
+  selector:
+    app: henkaipan-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: henkaipan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: henkaipan-worker
+  template:
+    metadata:
+      labels:
+        app: henkaipan-worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/dyallab/henkaipan-worker:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: henkaipan-config
+            - secretRef:
+                name: henkaipan-secrets
+          volumeMounts:
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+      volumes:
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        - name: tmp
+          emptyDir: {}

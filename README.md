@@ -12,6 +12,8 @@ Application Security Posture Management platform. Self-hosted edition.
 
 ## Quickstart
 
+### Docker Compose (Recommended for local/dev)
+
 ```bash
 # 1. Run the installer (checks prerequisites, generates secrets)
 ./install.sh
@@ -20,14 +22,25 @@ Application Security Posture Management platform. Self-hosted edition.
 docker compose up -d
 
 # 3. Open http://localhost:8080
-#    Login with admin / <your password>
+#    Login with admin / admin (change after first login!)
+```
+
+### Kubernetes (Production)
+
+See [Kubernetes Deployment Guide](docs/kubernetes-deployment.md) for production K8s deployment.
+
+```bash
+# Quick test deployment
+kubectl apply -f kubernetes/all-in-one.yaml
+kubectl port-forward svc/henkaipan-api 8080:8080 -n henkaipan
 ```
 
 ### Manual setup (without install.sh)
 
 ```bash
 cp .env.example .env
-# Edit .env: set JWT_SECRET, SECRET_ENCRYPTION_KEY, ADMIN_PASS
+# Edit .env: set JWT_SECRET, SECRET_ENCRYPTION_KEY
+# ADMIN_PASS is optional - defaults to "admin" if not set
 docker compose up -d
 ```
 
@@ -40,21 +53,61 @@ See `.env.example` for all options. Required variables:
 | `DATABASE_URL` | PostgreSQL connection string |
 | `JWT_SECRET` | Auth token signing key |
 | `SECRET_ENCRYPTION_KEY` | Encryption key for stored secrets |
-| `ADMIN_PASS` | Default admin password |
+
+Optional variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ADMIN_PASS` | Admin password (set on first run only) | `admin` |
+| `PROMETHEUS_PORT` | Prometheus metrics endpoint | `9090` |
+
+### Kubernetes Configuration
+
+For Kubernetes deployments, environment variables are configured via `ConfigMap` and `Secret` resources. See [Kubernetes Deployment Guide](docs/kubernetes-deployment.md) for details.
 
 ### AI Providers
 
-The self-hosted edition supports multiple AI providers for remediation, summary, and validation tasks:
+The self-hosted edition supports multiple AI providers with different capabilities:
 
-- **Ollama** (FREE, self-hosted) — Default. Set `OLLAMA_URL` and `OLLAMA_MODEL`
-- **OpenRouter** (Paid) — Highest quality models. Set `OPENROUTER_API_KEY`
-- **Cloudflare Workers AI** (Paid) — Cost-effective. Set `CF_ACCOUNT_ID` and `CF_API_TOKEN`
+**Free tier (no license key):**
+- **Ollama** (FREE, self-hosted) — Summary ONLY. Set `OLLAMA_URL` and `OLLAMA_MODEL`
+- Summary generation for findings is available without a license key
+
+**Paid features (require license key with `ai-remediation` feature):**
+- **Remediation** — Automated fix suggestions via OpenRouter, Cloudflare, or Ollama
+- **Validation** — AI-powered false positive detection
 
 Configure providers per task using `AI_REMEDIATION_PROVIDER`, `AI_SUMMARY_PROVIDER`, and `AI_VALIDATION_PROVIDER`.
+
+For a license key, contact **sales@dyallab.com.ar**.
 
 ### Monitoring
 
 Prometheus metrics are exposed on port `9090` (configurable via `PROMETHEUS_PORT`). Includes queue and database metrics collectors.
+
+**Access metrics:**
+
+```bash
+# Docker Compose
+curl http://localhost:9090/metrics
+
+# Kubernetes
+kubectl port-forward svc/henkaipan-api 9090:9090 -n henkaipan
+curl http://localhost:9090/metrics
+```
+
+**Sample Prometheus configuration:**
+
+```yaml
+scrape_configs:
+  - job_name: 'henkaipan-api'
+    static_configs:
+      - targets: ['api:9090']
+    metrics_path: /metrics
+    scrape_interval: 10s
+```
+
+See `monitoring/prometheus.yml` for a complete example configuration.
 
 ### Rate Limiting
 
@@ -73,8 +126,9 @@ The app runs in **free mode** without a license key — no time limit. Features 
 - All scanners (SAST, SCA, Secrets, IaC, Containers)
 - Findings triage, SLA tracking, vulnerability inventory
 - Webhooks
+- **AI Summary** (via Ollama)
 
-For paid features (scheduling, policies, compliance, AI remediation, integrations), request a license key at **sales@dyallab.com.ar**.
+For paid features (scheduling, policies, compliance, **AI remediation & validation**, integrations), request a license key at **sales@dyallab.com.ar**.
 
 ## Updating
 
