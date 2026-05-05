@@ -2,7 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
-## 1.2.0 — 2026-05-03
+## 1.2.0 — 2026-05-05
+
+### Operations & Production Documentation
+
+- **Production Deployment Guide** (`docs/production-deployment.md`): Reverse proxy setup (nginx + certbot, Caddy), TLS/HTTPS, security hardening (Docker socket mitigation, firewall rules, secrets management), upgrade with rollback procedures, monitoring (Prometheus, health checks), resource sizing guide, production checklist
+- **Operations Guide** (`docs/operations.md`): Worker scaling (multi-worker, queue monitoring), scanner runtime requirements (13 scanners with RAM/CPU/network specs), comprehensive troubleshooting guide (13 common issues with diagnosis and fixes), routine maintenance (log rotation, DB maintenance, SSL renewal, Docker cleanup)
 
 ### Improvements from Sentry Self-Hosted
 
