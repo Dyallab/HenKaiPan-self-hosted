@@ -123,6 +123,60 @@ esac
 
 echo ""
 
+# ── Ollama Installation (FREE, Self-Hosted AI) ────────────
+
+step "Ollama setup"
+echo ""
+
+# Install Ollama on the host if missing
+if command -v ollama &>/dev/null; then
+  ok "Ollama already installed ($(ollama --version 2>/dev/null || echo 'unknown version'))."
+else
+  info "Ollama not found. Installing Ollama on the host…"
+  if command -v curl &>/dev/null; then
+    curl -fsSL https://ollama.com/install.sh | sh
+  elif command -v wget &>/dev/null; then
+    wget -qO- https://ollama.com/install.sh | sh
+  else
+    fail "Neither curl nor wget found. Install curl first: sudo apt install curl (Debian) or sudo yum install curl (RHEL)."
+  fi
+  if ! command -v ollama &>/dev/null; then
+    fail "Ollama installation failed. Check the output above."
+  fi
+  ok "Ollama installed successfully."
+fi
+
+# Ensure Ollama is running
+info "Checking Ollama service…"
+if command -v systemctl &>/dev/null; then
+  if systemctl is-active --quiet ollama 2>/dev/null; then
+    ok "Ollama service is active."
+  else
+    info "Starting Ollama service…"
+    sudo systemctl start ollama 2>/dev/null || true
+    ok "Ollama service started."
+  fi
+  sudo systemctl enable ollama 2>/dev/null || true
+elif command -v launchctl &>/dev/null; then
+  if launchctl list 2>/dev/null | grep -q "ollama"; then
+    ok "Ollama is running."
+  else
+    info "Starting Ollama…"
+    ollama serve &>/dev/null &
+    sleep 2
+    ok "Ollama started."
+  fi
+else
+  warn "Unknown init system. Ensure Ollama is running: ollama serve"
+fi
+
+DEFAULT_OLLAMA_MODEL="${OLLAMA_MODEL:-gemma4:e4b}"
+info "Pulling Ollama model: ${DEFAULT_OLLAMA_MODEL} (this may take a while)…"
+ollama pull "$DEFAULT_OLLAMA_MODEL" 2>&1 | tail -1
+ok "Model ${DEFAULT_OLLAMA_MODEL} pulled."
+
+echo ""
+
 # ── Configuration ────────────────────────────────────────
 
 if [ -f ".env" ]; then
@@ -147,6 +201,15 @@ else
   done
 
   cp .env.example .env
+
+  # Enable Ollama with host.docker.internal so containers reach the host
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s|# OLLAMA_URL=.*|OLLAMA_URL=http://host.docker.internal:11434|" .env
+    sed -i '' "s|# OLLAMA_MODEL=.*|OLLAMA_MODEL=${OLLAMA_MODEL:-gemma4:e4b}|" .env
+  else
+    sed -i "s|# OLLAMA_URL=.*|OLLAMA_URL=http://host.docker.internal:11434|" .env
+    sed -i "s|# OLLAMA_MODEL=.*|OLLAMA_MODEL=${OLLAMA_MODEL:-gemma4:e4b}|" .env
+  fi
 
   # macOS sed vs Linux sed
   if [[ "$OSTYPE" == "darwin"* ]]; then

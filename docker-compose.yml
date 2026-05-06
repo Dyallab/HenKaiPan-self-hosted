@@ -5,7 +5,6 @@ x-restart-policy: &restart_policy
 x-healthcheck-defaults: &healthcheck_defaults
   # Docker uses more CPU with frequent healthchecks - see:
   # https://github.com/moby/moby/issues/39102
-  # https://github.com/getsentry/self-hosted/issues/1000
   interval: 30s
   timeout: 10s
   retries: 3
@@ -24,7 +23,8 @@ services:
   postgres:
     <<: [*restart_policy, *env_file]
     image: postgres:17-alpine
-    command: ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=1000"]
+    command:
+      ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
     ports:
       - "5432:5432"
     volumes:
@@ -33,11 +33,22 @@ services:
       <<: *healthcheck_defaults
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aspm} -d aspm"]
     shm_size: 256m
+    networks:
+      - henkaipan-net
 
   redis:
     <<: [*restart_policy, *env_file]
     image: redis:8-alpine
-    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--maxmemory",
+        "512mb",
+        "--maxmemory-policy",
+        "allkeys-lru",
+      ]
     ports:
       - "6379:6379"
     volumes:
@@ -45,11 +56,15 @@ services:
     healthcheck:
       <<: *healthcheck_defaults
       test: ["CMD", "redis-cli", "ping"]
+    networks:
+      - henkaipan-net
 
   api:
     <<: [*restart_policy, *env_file]
     image: ghcr.io/dyallab/henkaipan-api:latest
     pull_policy: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8080:8080"
       - "${PROMETHEUS_PORT:-9090}:9090"
@@ -60,13 +75,18 @@ services:
         <<: *depends_on_healthy
     healthcheck:
       <<: *healthcheck_defaults
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+      test:
+        ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
       start_period: 60s
+    networks:
+      - henkaipan-net
 
   worker:
     <<: [*restart_policy, *env_file]
     image: ghcr.io/dyallab/henkaipan-worker:latest
     pull_policy: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp:/tmp
@@ -80,7 +100,13 @@ services:
       <<: *healthcheck_defaults
       test: ["CMD-SHELL", "echo 'worker healthy'"]
       start_period: 120s
+    networks:
+      - henkaipan-net
 
 volumes:
   pgdata:
   redis-data:
+
+networks:
+  henkaipan-net:
+    driver: bridge
