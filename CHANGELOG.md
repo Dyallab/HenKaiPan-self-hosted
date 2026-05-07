@@ -2,6 +2,31 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.3.0 — 2026-05-07
+
+### Features
+
+- **Real-time SSE updates**: Server-Sent Events system delivers AI summary, validation, scan, webhook, and notification events to the browser without polling
+- **Redis pub/sub bridge**: Cross-process event delivery from worker to API via Redis channel `aspm:events`, enabling real-time updates in Docker Compose and multi-process deployments
+- **SSE client library**: Frontend SSEClient singleton with automatic reconnection, event type filtering, and connection status monitoring
+
+### Improvements
+
+- **AI summary deduplication**: `PrepareAISummary()` sets `summary_state = pending` immediately in DB, preventing duplicate requests (returns 202 for pending, 200 for ready)
+- **Asynq Unique(5min)**: Summary and validation tasks now use deduplication to prevent duplicate queue entries
+- **SSE event architecture**: All known event types registered as EventSource listeners — pages subscribe via `.on()` handlers without specifying types upfront
+
+### Fixes
+
+- **SSE events never reached browser**: SSEClient singleton only registered filtered event types in `addEventListener`. Pages subscribing later got stale instance with wrong filters. Fix: ALL_SSE_EVENT_TYPES constant, always register all known types
+- **AI summary auto-request on page load**: Removed `maybeQueueFindingSummary` from `GetFinding` handler and disabled `enqueueFindingSummary` in scan_run (commented out for future re-enablement)
+- **Blue information toast on finding detail**: Removed invasive toast notification that appeared when viewing findings without descriptions
+- **SSE disconnect on page navigation**: Removed `beforeunload` handler that killed the shared singleton connection
+
+### Configuration
+
+- **Redis pub/sub**: Worker publishes events to Redis channel `aspm:events`; API subscribes and relays to browser clients. No additional configuration needed — uses existing `REDIS_ADDR`
+
 ## 1.2.0 — 2026-05-05
 
 ### Operations & Production Documentation
