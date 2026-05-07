@@ -59,6 +59,10 @@ Optional variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ADMIN_PASS` | Admin password (set on first run only) | `admin` |
+| `COOKIE_SECURE` | Set `true` behind HTTPS | `false` |
+| `COOKIE_DOMAIN` | Cookie domain (e.g. `.example.com`) | empty |
+| `COOKIE_SAMESITE` | SameSite policy: `lax`, `strict`, or `none` | `lax` |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated allowed origins | localhost origins |
 | `PROMETHEUS_PORT` | Prometheus metrics endpoint | `9090` |
 
 ### Kubernetes Configuration
@@ -141,10 +145,51 @@ Migrations run automatically on startup. See the [deployment guide](https://henk
 
 ## Production Checklist
 
-- [ ] Set `COOKIE_SECURE=true` behind HTTPS
-- [ ] Configure reverse proxy (nginx/caddy) with TLS
+- [ ] Set `COOKIE_SECURE=true` (REQUIRED behind HTTPS)
+- [ ] Set `COOKIE_DOMAIN=.example.com` for your domain
+- [ ] Set `COOKIE_SAMESITE=lax` (default) or `strict` for stricter CSRF protection
+- [ ] Set `CORS_ALLOWED_ORIGINS=https://aspm.example.com` (comma-separated if multiple)
+- [ ] Configure reverse proxy (nginx/caddy/traefik) with TLS termination
+- [ ] Set `PUBLIC_API_BASE=` (empty) in frontend, or serve API + frontend from same origin
 - [ ] Set up database backups
 - [ ] Configure email notifications (SMTP)
+- [ ] Rotate default credentials (`ADMIN_USER`, `ADMIN_PASS`, `JWT_SECRET`, `SECRET_ENCRYPTION_KEY`)
+
+### Reverse Proxy Example (nginx)
+
+When deploying behind a reverse proxy, the API and frontend should be served
+from the **same origin** (e.g. `https://aspm.example.com`). This eliminates
+CORS issues and ensures cookies work correctly.
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name aspm.example.com;
+
+    ssl_certificate     /etc/ssl/aspm.crt;
+    ssl_certificate_key /etc/ssl/aspm.key;
+
+    # Frontend (static files)
+    location / {
+        proxy_pass http://127.0.0.1:4321;
+    }
+
+    # API + SSE
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # SSE-specific: disable buffering for real-time events
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+    }
+}
+```
 
 For detailed production deployment instructions, see the [production deployment guide](https://henkaipan.dyallab.com.ar/docs/quickstart/#production-deployment).
 
