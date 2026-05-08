@@ -2,6 +2,27 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.4.0 — 2026-05-08
+
+### Security
+
+- **Defense-in-depth hardening**: All services now follow least-privilege principle
+- **cap_drop ALL**: Baseline capability restriction on every service
+- **Minimal cap_add**: Only required capabilities added per service:
+  - postgres: CHOWN, SETUID, SETGID, DAC_OVERRIDE
+  - redis: CHOWN, SETUID, SETGID
+  - worker: FOWNER, FSETID, DAC_OVERRIDE, CHOWN, SETUID, SETGID
+  - api: no additional capabilities
+- **no-new-privileges**: Applied to all services
+- **Docker socket removed**: Worker no longer mounts `/var/run/docker.sock`
+- **Scanner binary execution**: Scanners run as binaries via `os/exec` (no Docker)
+- **Security headers**: CSP, X-Frame-Options, X-XSS-Protection, HSTS on all API responses
+- **Input validation**: Backend (go-playground/validator) + Frontend (Zod) on all endpoints
+- **IDOR prevention**: Ownership middleware on all resource endpoints with admin bypass
+- **JWT hardening**: No default secret, expiration required, SetSecret() enforcement
+- **Error sanitization**: Production mode hides internal error details
+- **Rate limiting fail-closed**: Requests blocked when Redis is unavailable
+
 ## 1.3.0 — 2026-05-07
 
 ### Features
