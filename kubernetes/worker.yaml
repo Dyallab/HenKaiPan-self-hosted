@@ -26,29 +26,25 @@ spec:
                 name: henkaipan-config
             - secretRef:
                 name: henkaipan-secrets
-          volumeMounts:
-            - name: docker-sock
-              mountPath: /var/run/docker.sock
-            - name: tmp
-              mountPath: /tmp
-          resources:
+           volumeMounts:
+             - name: tmp
+               mountPath: /tmp
+           resources:
             requests:
               memory: "1Gi"
               cpu: "500m"
             limits:
               memory: "4Gi"
               cpu: "2000m"
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-      volumes:
-        - name: docker-sock
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
-        - name: tmp
-          emptyDir: {}
+           securityContext:
+             runAsNonRoot: true
+             runAsUser: 1000
+             runAsGroup: 1000
+             allowPrivilegeEscalation: false
+             readOnlyRootFilesystem: true
+             capabilities:
+               drop:
+                 - ALL
+       volumes:
+         - name: tmp
+           emptyDir: {}
