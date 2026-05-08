@@ -155,6 +155,59 @@ Migrations run automatically on startup. See the [deployment guide](https://henk
 - [ ] Configure email notifications (SMTP)
 - [ ] Rotate default credentials (`ADMIN_USER`, `ADMIN_PASS`, `JWT_SECRET`, `SECRET_ENCRYPTION_KEY`)
 
+## Security
+
+HenKaiPan follows **defense-in-depth** principles. All services are hardened by default:
+
+| Layer | Implementation |
+|-------|---------------|
+| **Syscall** | seccomp profiles restrict allowed system calls |
+| **Capabilities** | `cap_drop ALL` + minimal `cap_add` per service |
+| **Privileges** | `no-new-privileges` on all services |
+| **User** | Non-root user (1000:1000) on worker |
+| **Filesystem** | Read-only root filesystem (Kubernetes) |
+| **Network** | Isolated bridge network, no Docker socket |
+
+### Service Capabilities
+
+| Service | cap_drop | cap_add |
+|---------|----------|---------|
+| **postgres** | ALL | CHOWN, SETUID, SETGID, DAC_OVERRIDE |
+| **redis** | ALL | CHOWN, SETUID, SETGID |
+| **worker** | ALL | FOWNER, FSETID, DAC_OVERRIDE, CHOWN, SETUID, SETGID |
+| **api** | ALL | — (none needed) |
+
+### Scanner Execution
+
+Worker runs scanners as **binaries** via `os/exec` — no Docker socket required.
+Supported scanners: semgrep, trivy, gitleaks, checkov, grype, osv-scanner, trufflehog, tfsec, kics, nuclei, gosec.
+
+### Rate Limiting
+
+Redis-based rate limiting is enabled by default with per-endpoint tiers:
+- Auth endpoints: 10 requests/min
+- Heavy operations: 20 requests/min
+- General endpoints: 100 requests/min
+
+Rate limit headers (`X-RateLimit-*`) are included in responses.
+The system **fails closed** on Redis errors (requests blocked for safety).
+
+### Security Headers
+
+All API responses include:
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `X-XSS-Protection: 1; mode=block`
+- `Content-Security-Policy: default-src 'self'`
+- `Strict-Transport-Security` (when `COOKIE_SECURE=true`)
+
+### Input Validation
+
+All API inputs are validated:
+- **Backend**: go-playground/validator enforces field constraints
+- **Frontend**: Zod schemas provide client-side validation
+- Invalid requests return `400` with detailed error messages
+
 ### Reverse Proxy Example (nginx)
 
 When deploying behind a reverse proxy, the API and frontend should be served
