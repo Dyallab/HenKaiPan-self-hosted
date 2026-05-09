@@ -102,10 +102,12 @@ services:
     <<: [*restart_policy, *env_file, *security_opt, *cap_drop_all]
     image: ghcr.io/dyallab/henkaipan-worker:latest
     pull_policy: always
+    user: "1000:1000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
+    read_only: true
     security_opt:
       - no-new-privileges:true
       - seccomp:docker/seccomp-worker.json

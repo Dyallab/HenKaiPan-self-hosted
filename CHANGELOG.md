@@ -10,6 +10,7 @@ All notable changes to the self-hosted distribution are documented here.
 - **Reduced attack surface**: Worker no longer mounts `/var/run/docker.sock` — no root-equivalent access needed
 - **Simplified deployment**: No per-scanner container orchestration, no image pulls, no volume mounts
 - **Kubernetes manifests**: Removed `docker.sock` hostPath volume from worker deployment
+- **Docker Compose hardening**: Worker now runs as non-root user (uid 1000) with read-only root filesystem, matching Kubernetes security context
 
 ### Fixes
 
