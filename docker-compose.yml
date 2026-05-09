@@ -106,6 +106,9 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
+    security_opt:
+      - no-new-privileges:true
+      - seccomp:docker/seccomp-worker.json
     cap_add:
       - FOWNER
       - FSETID

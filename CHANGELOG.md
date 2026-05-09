@@ -2,6 +2,15 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.4.1 — 2026-05-09
+
+### Fixes
+
+- **Worker seccomp profile**: Added `clone`, `clone3`, `arch_prctl`, `mbind` syscalls required by Go 1.26 runtime (prevented worker startup with segmentation fault)
+- **Scanner compatibility**: Checkov prebuilt binaries incompatible with Alpine musl libc — reverted to pip installation
+- **Semgrep pysemgrep wrapper**: Added wrapper script for Python module execution
+- **GitHub release URLs**: Fixed asset download URLs for gitleaks, trufflehog, kics, nuclei, gosec (version-specific instead of `latest/download` which returns 404)
+
 ## 1.4.0 — 2026-05-08
 
 ### Security
