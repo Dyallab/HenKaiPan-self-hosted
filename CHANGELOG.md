@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.5.1 — 2026-05-09
+
+### Fixes
+
+- **API Docker build**: Fixed `pnpm install` failure in API Docker image — pnpm 11 blocks esbuild/sharp build scripts by default, now uses `--ignore-scripts` + explicit `pnpm rebuild`
+
 ## 1.5.0 — 2026-05-09
 
 ### Improvements
