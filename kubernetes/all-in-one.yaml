@@ -259,8 +259,6 @@ spec:
             - secretRef:
                 name: henkaipan-secrets
           volumeMounts:
-            - name: docker-sock
-              mountPath: /var/run/docker.sock
             - name: tmp
               mountPath: /tmp
           resources:
@@ -271,9 +269,5 @@ spec:
               memory: "4Gi"
               cpu: "2000m"
       volumes:
-        - name: docker-sock
-          hostPath:
-            path: /var/run/docker.sock
-            type: Socket
         - name: tmp
           emptyDir: {}

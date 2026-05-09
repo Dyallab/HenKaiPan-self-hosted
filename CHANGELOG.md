@@ -2,6 +2,25 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.5.0 — 2026-05-09
+
+### Improvements
+
+- **Scanner execution model**: Scanners now run as embedded binaries in the worker process instead of Docker containers — eliminates Docker socket requirement entirely
+- **Reduced attack surface**: Worker no longer mounts `/var/run/docker.sock` — no root-equivalent access needed
+- **Simplified deployment**: No per-scanner container orchestration, no image pulls, no volume mounts
+- **Kubernetes manifests**: Removed `docker.sock` hostPath volume from worker deployment
+
+### Fixes
+
+- **Semgrep scan failure**: Fixed exit code 2 caused by incorrect target path argument (`semgrep` was passed as scan target instead of repo directory)
+
+### Removed
+
+- **Docker-based scanner execution**: `docker/scanners/*.Dockerfile` deleted (semgrep, gosec, checkov standalone images)
+- **Makefile targets**: `build-scanner-slim` and `build-all` removed — scanner binaries bundled in worker image
+- **Dead code**: `Scanner.Image`, `Scanner.MountDst`, `Scanner.Entrypoint`, `Scanner.ExtraVolumes` fields removed from registry
+
 ## 1.4.1 — 2026-05-09
 
 ### Fixes
