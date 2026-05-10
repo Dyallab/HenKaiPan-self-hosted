@@ -2,6 +2,32 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.6.0 — 2026-05-09
+
+### Features
+
+- **Per-app scan scheduling**: Schedules can now target entire apps (`app_id` column on `scan_schedules`). When an app is selected, the schedule triggers scans for all projects belonging to that app — mutually exclusive with per-project schedules
+- **GitHub repository discovery**: New pattern-based repo resolution engine (`internal/github/` package) supporting glob patterns (`org/*`, `@user/*`, `org/repo-*`) via GitHub API search — simplifies project onboarding at scale
+- **Bulk project import**: `POST /api/projects/bulk` endpoint to import multiple projects at once from a GitHub pattern match, with `BulkCreateProjects` repository operation
+- **Bulk project assignment**: `POST /api/projects/bulk-assign` endpoint to batch-reassign projects to an app, with `AssignProjectsToApp` repository operation
+- **Vulnerability Inventory**: New free-tier routes `/api/vulnerabilities` and `/api/vulnerabilities/{vulnID}/affected` for aggregating and tracking vulnerability entries across the organization
+- **Pattern-based project filtering**: `GET /api/projects` now supports `?pattern=` query param for glob-based project lookup via `ListStandaloneByPattern`
+
+### Improvements
+
+- **Scanner packs**: `ResolvePack` groups related scanners for bulk execution — a single scanner selector can now trigger multiple scanners
+- **Per-app scan triggering**: Create scans targeting entire apps from the UI and API (`app_id` field in scan creation payload)
+- **Enhanced projects dashboard**: Major UI rework with app context, pattern-based filtering, and project management actions
+- **Enhanced scans dashboard**: Major UI rework with per-app filtering and scan triggering
+- **Enhanced schedules dashboard**: Major UI rework with app-level schedule management, app selector, and schedule status visibility
+- **Validation struct tags**: Added proper `json:` tags to `CreateProjectRequest` and extended model with `Provider` and `DefaultBranch` fields
+- **Defensive nil-safety**: Apps list now returns empty slice instead of nil for `Projects` field
+
+### Fixes
+
+- **Rate limiting refinements**: Adjusted rate limiting middleware for better reliability under concurrent requests
+- **Frontend API client cleanup**: Removed unused code paths from `api.ts`
+
 ## 1.5.1 — 2026-05-09
 
 ### Fixes
