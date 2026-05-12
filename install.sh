@@ -252,18 +252,8 @@ echo ""
 
 info "Pre-pulling Docker images (this may take a few minutes)..."
 
-IMAGES=$(docker compose config --images 2>/dev/null || true)
-if [ -n "$IMAGES" ]; then
-  echo "$IMAGES" | while read -r IMG; do
-    [ -z "$IMG" ] && continue
-    info "Pulling ${IMG}..."
-    docker pull "$IMG" >/dev/null 2>&1 &
-  done
-  wait
-  ok "Images pulled"
-else
-  warn "Could not determine images to pull. Run 'docker compose pull' manually."
-fi
+docker compose pull 2>&1 | tail -5 || warn "Some images could not be pulled. Run 'docker compose pull' manually."
+ok "Images pulled"
 
 echo ""
 
