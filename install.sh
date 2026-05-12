@@ -273,13 +273,17 @@ echo ""
 
 # ── Summary ───────────────────────────────────────────────
 
+# Detect IP for remote access
+HOST_IP=$(hostname -I 2>/dev/null | awk '{print $1}' || echo "localhost")
+HOST_IP="${HOST_IP:-localhost}"
+
 ADMIN_DISPLAY=$(grep "^ADMIN_PASS=" .env 2>/dev/null | cut -d'=' -f2 | head -1 || true)
 ADMIN_DISPLAY="${ADMIN_DISPLAY:-admin}"
 
 echo "  ┌─────────────────────────────────────────────────────┐"
 echo "  │  ${GREEN}HenKaiPan is up and running!${NC}                              │"
 echo "  │                                                     │"
-echo "  │  Open:    ${CYAN}http://localhost:8080${NC}                      │"
+echo "  │  Open:    ${CYAN}http://${HOST_IP}:8080${NC}                      │"
 echo "  │  Login:   admin / ${YELLOW}${ADMIN_DISPLAY}${NC}                       │"
 echo "  │                                                     │"
 echo "  │  ${YELLOW}⚠ Change the default password after first login!${NC}   │"
