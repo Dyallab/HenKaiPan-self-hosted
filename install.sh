@@ -209,18 +209,9 @@ else
   JWT_SECRET=$(openssl rand -hex 32 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | head -c 64)
   ENC_KEY=$(openssl rand -hex 32 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | head -c 64)
 
-  ADMIN_PASS=""
-  while [ -z "$ADMIN_PASS" ]; do
-    read -s -p "  Admin password (leave empty for random): " ADMIN_PASS_INPUT
-    echo ""
-    if [ -z "$ADMIN_PASS_INPUT" ]; then
-      ADMIN_PASS=$(openssl rand -base64 12 2>/dev/null || echo "change-me")
-      info "Generated random admin password: ${ADMIN_PASS}"
-      echo "  (save this somewhere safe)"
-    else
-      ADMIN_PASS="$ADMIN_PASS_INPUT"
-    fi
-  done
+  # Default credentials on first run: admin / admin
+  # Change immediately after first login via Settings → Users
+  ADMIN_PASS="admin"
 
   cp .env.example .env
 
