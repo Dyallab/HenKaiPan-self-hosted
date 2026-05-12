@@ -240,10 +240,16 @@ else
     sed -i '' "s|JWT_SECRET=.*|JWT_SECRET=${JWT_SECRET}|" .env
     sed -i '' "s|SECRET_ENCRYPTION_KEY=.*|SECRET_ENCRYPTION_KEY=${ENC_KEY}|" .env
     sed -i '' "s|ADMIN_PASS=.*|ADMIN_PASS=${ADMIN_PASS}|" .env
+    sed -i '' "s|POSTGRES_DB=.*|POSTGRES_DB=aspm|" .env
+    sed -i '' "s|POSTGRES_USER=.*|POSTGRES_USER=aspm|" .env
+    sed -i '' "s|POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=aspm|" .env
   else
     sed -i "s|JWT_SECRET=.*|JWT_SECRET=${JWT_SECRET}|" .env
     sed -i "s|SECRET_ENCRYPTION_KEY=.*|SECRET_ENCRYPTION_KEY=${ENC_KEY}|" .env
     sed -i "s|ADMIN_PASS=.*|ADMIN_PASS=${ADMIN_PASS}|" .env
+    sed -i "s|POSTGRES_DB=.*|POSTGRES_DB=aspm|" .env
+    sed -i "s|POSTGRES_USER=.*|POSTGRES_USER=aspm|" .env
+    sed -i "s|POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=aspm|" .env
   fi
 
   ok ".env configured"

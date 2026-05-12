@@ -23,13 +23,9 @@ x-security-opt: &security_opt
   security_opt:
     - no-new-privileges:true
 
-x-cap-drop-all: &cap_drop_all
-  cap_drop:
-    - ALL
-
 services:
   postgres:
-    <<: [*restart_policy, *env_file, *security_opt, *cap_drop_all]
+    <<: [*restart_policy, *env_file, *security_opt]
     image: postgres:17-alpine
     command:
       ["postgres", "-c", "shared_buffers=256MB", "-c", "max_connections=200"]
@@ -37,11 +33,6 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-    cap_add:
-      - CHOWN
-      - SETUID
-      - SETGID
-      - DAC_OVERRIDE
     healthcheck:
       <<: *healthcheck_defaults
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aspm} -d aspm"]
@@ -50,7 +41,7 @@ services:
       - henkaipan-net
 
   redis:
-    <<: [*restart_policy, *env_file, *security_opt, *cap_drop_all]
+    <<: [*restart_policy, *env_file, *security_opt]
     image: redis:8-alpine
     command:
       [
@@ -66,10 +57,6 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-    cap_add:
-      - CHOWN
-      - SETUID
-      - SETGID
     healthcheck:
       <<: *healthcheck_defaults
       test: ["CMD", "redis-cli", "ping"]
@@ -77,7 +64,7 @@ services:
       - henkaipan-net
 
   api:
-    <<: [*restart_policy, *env_file, *security_opt, *cap_drop_all]
+    <<: [*restart_policy, *env_file, *security_opt]
     image: ghcr.io/dyallab/henkaipan-api:latest
     pull_policy: always
     extra_hosts:
@@ -99,7 +86,7 @@ services:
       - henkaipan-net
 
   worker:
-    <<: [*restart_policy, *env_file, *security_opt, *cap_drop_all]
+    <<: [*restart_policy, *env_file, *security_opt]
     image: ghcr.io/dyallab/henkaipan-worker:latest
     pull_policy: always
     user: "1000:1000"
@@ -111,13 +98,6 @@ services:
     security_opt:
       - no-new-privileges:true
       - seccomp:docker/seccomp-worker.json
-    cap_add:
-      - FOWNER
-      - FSETID
-      - DAC_OVERRIDE
-      - CHOWN
-      - SETUID
-      - SETGID
     depends_on:
       postgres:
         <<: *depends_on_healthy
