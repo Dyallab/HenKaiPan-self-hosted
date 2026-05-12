@@ -5,7 +5,7 @@ test "${DEBUG:-}" && set -x
 # ──────────────────────────────────────────────────────────
 # HenKaiPan ASPM — Self-Hosted Installer
 # ──────────────────────────────────────────────────────────
-# Usage: ./install.sh
+# Usage: ./install.sh [--skip-ollama]
 #
 # Checks prerequisites, generates config, pre-pulls images,
 # and prints next steps.
@@ -51,6 +51,24 @@ echo ""
 echo "  ${BOLD}HenKaiPan ASPM — Self-Hosted Installer${NC}"
 echo "  ======================================"
 echo ""
+
+# ── Parse flags ──────────────────────────────────────────
+
+SKIP_OLLAMA=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --skip-ollama)
+      SKIP_OLLAMA=true
+      shift
+      ;;
+    *)
+      fail "Unknown option: $1"
+      echo "  Usage: $0 [--skip-ollama]"
+      exit 1
+      ;;
+  esac
+done
 
 # ── Pre-flight checks ────────────────────────────────────
 
@@ -123,6 +141,8 @@ esac
 
 echo ""
 
+if [ "$SKIP_OLLAMA" = false ]; then
+
 # ── Ollama Installation (FREE, Self-Hosted AI) ────────────
 
 step "Ollama setup"
@@ -177,6 +197,8 @@ ok "Model ${DEFAULT_OLLAMA_MODEL} pulled."
 
 echo ""
 
+fi
+
 # ── Configuration ────────────────────────────────────────
 
 if [ -f ".env" ]; then
@@ -202,13 +224,15 @@ else
 
   cp .env.example .env
 
-  # Enable Ollama with host.docker.internal so containers reach the host
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s|# OLLAMA_URL=.*|OLLAMA_URL=http://host.docker.internal:11434|" .env
-    sed -i '' "s|# OLLAMA_MODEL=.*|OLLAMA_MODEL=${OLLAMA_MODEL:-gemma4:e4b}|" .env
-  else
-    sed -i "s|# OLLAMA_URL=.*|OLLAMA_URL=http://host.docker.internal:11434|" .env
-    sed -i "s|# OLLAMA_MODEL=.*|OLLAMA_MODEL=${OLLAMA_MODEL:-gemma4:e4b}|" .env
+  if [ "$SKIP_OLLAMA" = false ]; then
+    # Enable Ollama with host.docker.internal so containers reach the host
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+      sed -i '' "s|# OLLAMA_URL=.*|OLLAMA_URL=http://host.docker.internal:11434|" .env
+      sed -i '' "s|# OLLAMA_MODEL=.*|OLLAMA_MODEL=${OLLAMA_MODEL:-gemma4:e4b}|" .env
+    else
+      sed -i "s|# OLLAMA_URL=.*|OLLAMA_URL=http://host.docker.internal:11434|" .env
+      sed -i "s|# OLLAMA_MODEL=.*|OLLAMA_MODEL=${OLLAMA_MODEL:-gemma4:e4b}|" .env
+    fi
   fi
 
   # macOS sed vs Linux sed

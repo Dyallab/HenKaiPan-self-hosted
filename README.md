@@ -16,7 +16,8 @@ Application Security Posture Management platform. Self-hosted edition.
 
 ```bash
 # 1. Run the installer (checks prerequisites, generates secrets)
-./install.sh
+./install.sh                 # with Ollama (free AI summaries)
+./install.sh --skip-ollama   # without Ollama
 
 # 2. Start
 docker compose up -d
@@ -34,6 +35,12 @@ See [Kubernetes Deployment Guide](docs/kubernetes-deployment.md) for production 
 kubectl apply -f kubernetes/all-in-one.yaml
 kubectl port-forward svc/henkaipan-api 8080:8080 -n henkaipan
 ```
+
+### Installer flags
+
+| Flag | Description |
+|------|-------------|
+| `--skip-ollama` | Skip Ollama installation, model pull, and .env configuration. Use this if you don't need AI summaries or prefer to configure Ollama manually later. |
 
 ### Manual setup (without install.sh)
 
