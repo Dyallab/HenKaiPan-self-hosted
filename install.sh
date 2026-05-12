@@ -257,54 +257,39 @@ ok "Images pulled"
 
 echo ""
 
-# ── Summary ───────────────────────────────────────────────
+# ── Start Stack ──────────────────────────────────────────
 
-step "Installation complete!"
+step "Starting the stack…"
 echo ""
 
-# Try to get the admin password from .env if it exists
-ADMIN_DISPLAY=""
-if [ -f ".env" ]; then
-  ADMIN_DISPLAY=$(grep "^ADMIN_PASS=" .env 2>/dev/null | cut -d'=' -f2 | head -1 || true)
-fi
+docker compose up -d 2>&1 || {
+  warn "Failed to start the stack. Run 'docker compose up -d' manually."
+  exit 1
+}
 
-if [ -n "$ADMIN_DISPLAY" ]; then
-  echo "  ┌─────────────────────────────────────────────────────┐"
-  echo "  │  ${GREEN}Installation complete${NC}                                     │"
-  echo "  │                                                     │"
-  echo "  │  Run the stack:                                     │"
-  echo "  │    ${CYAN}docker compose up -d${NC}                              │"
-  echo "  │                                                     │"
-  echo "  │  Open:    ${CYAN}http://localhost:8080${NC}                      │"
-  echo "  │  Login:   admin / ${YELLOW}$ADMIN_DISPLAY${NC}                       │"
-  echo "  │                                                     │"
-  echo "  │  ${YELLOW}⚠ Change the default password after first login!${NC}   │"
-  echo "  │                                                     │"
-  echo "  │  For production:                                    │"
-  echo "  │    - Set COOKIE_SECURE=true behind HTTPS             │"
-  echo "  │    - Configure reverse proxy (nginx/caddy) with TLS  │"
-  echo "  │    - Set up database backups (see docs/)             │"
-  echo "  │    - Review security checklist in README.md          │"
-  echo "  │                                                     │"
-  echo "  │  Documentation: https://henkaipan.dyallab.com.ar    │"
-  echo "  └─────────────────────────────────────────────────────┘"
-else
-  echo "  ┌─────────────────────────────────────────────────────┐"
-  echo "  │  ${GREEN}Installation complete${NC}                                     │"
-  echo "  │                                                     │"
-  echo "  │  Run the stack:                                     │"
-  echo "  │    ${CYAN}docker compose up -d${NC}                              │"
-  echo "  │                                                     │"
-  echo "  │  Open:    ${CYAN}http://localhost:8080${NC}                      │"
-  echo "  │  Login:   admin / <your password>                    │"
-  echo "  │                                                     │"
-  echo "  │  For production:                                    │"
-  echo "  │    - Set COOKIE_SECURE=true behind HTTPS             │"
-  echo "  │    - Configure reverse proxy (nginx/caddy) with TLS  │"
-  echo "  │    - Set up database backups (see docs/)             │"
-  echo "  │    - Review security checklist in README.md          │"
-  echo "  │                                                     │"
-  echo "  │  Documentation: https://henkaipan.dyallab.com.ar    │"
-  echo "  └─────────────────────────────────────────────────────┘"
-fi
+ok "Stack is running!"
+
+echo ""
+
+# ── Summary ───────────────────────────────────────────────
+
+ADMIN_DISPLAY=$(grep "^ADMIN_PASS=" .env 2>/dev/null | cut -d'=' -f2 | head -1 || true)
+ADMIN_DISPLAY="${ADMIN_DISPLAY:-admin}"
+
+echo "  ┌─────────────────────────────────────────────────────┐"
+echo "  │  ${GREEN}HenKaiPan is up and running!${NC}                              │"
+echo "  │                                                     │"
+echo "  │  Open:    ${CYAN}http://localhost:8080${NC}                      │"
+echo "  │  Login:   admin / ${YELLOW}${ADMIN_DISPLAY}${NC}                       │"
+echo "  │                                                     │"
+echo "  │  ${YELLOW}⚠ Change the default password after first login!${NC}   │"
+echo "  │                                                     │"
+echo "  │  For production:                                    │"
+echo "  │    - Set COOKIE_SECURE=true behind HTTPS             │"
+echo "  │    - Configure reverse proxy (nginx/caddy) with TLS  │"
+echo "  │    - Set up database backups (see docs/)             │"
+echo "  │    - Review security checklist in README.md          │"
+echo "  │                                                     │"
+echo "  │  Documentation: https://henkaipan.dyallab.com.ar    │"
+echo "  └─────────────────────────────────────────────────────┘"
 echo ""
