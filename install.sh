@@ -275,7 +275,7 @@ echo ""
 # Try to get the admin password from .env if it exists
 ADMIN_DISPLAY=""
 if [ -f ".env" ]; then
-  ADMIN_DISPLAY=$(grep "^ADMIN_PASS=" .env 2>/dev/null | cut -d'=' -f2 | head -1)
+  ADMIN_DISPLAY=$(grep "^ADMIN_PASS=" .env 2>/dev/null | cut -d'=' -f2 | head -1 || true)
 fi
 
 if [ -n "$ADMIN_DISPLAY" ]; then
