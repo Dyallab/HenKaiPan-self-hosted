@@ -2,6 +2,28 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.7.0 — 2026-05-12
+
+### Features
+
+- **`--skip-ollama` flag**: New installer flag to skip Ollama installation, model pulling, and .env configuration. Useful when Ollama is already running elsewhere or AI summaries aren't needed
+- **Auto-start stack**: Installer now runs `docker compose up -d` automatically after pulling images — no manual step needed
+- **IP detection in summary**: Installer displays the machine's IP address instead of `localhost` in the done message, so users can open the UI from another PC
+
+### Improvements
+
+- **Simplified docker-compose**: Removed all `cap_drop` / `cap_add` hardening for a cleaner development experience
+- **Streamlined installer**: Removed admin password prompt — defaults to `admin / admin` on first login (as documented)
+- **Robust image pulling**: Replaced broken background-subshell pull loop with synchronous `docker compose pull`
+- **Better error resilience**: Added `|| true` to grep pipelines to prevent `pipefail` from crashing the script on missing variables
+
+### Fixes
+
+- **Missing `REDIS_ADDR`**: Added `REDIS_ADDR=redis:6379` to `.env.example` and installer — API would crash on startup without it
+- **Missing `POSTGRES_*` variables**: Added `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` to `.env.example` and installer — required by the postgres container
+- **Missing `ADMIN_PASS`**: Added `ADMIN_PASS=admin` to `.env.example` so the installer's sed replacement works correctly
+- **Ollama vars always active**: Commented out `OLLAMA_URL` and `OLLAMA_MODEL` in `.env.example` so `--skip-ollama` actually disables them
+
 ## 1.6.0 — 2026-05-09
 
 ### Features

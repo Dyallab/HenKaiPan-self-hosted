@@ -15,14 +15,11 @@ Application Security Posture Management platform. Self-hosted edition.
 ### Docker Compose (Recommended for local/dev)
 
 ```bash
-# 1. Run the installer (checks prerequisites, generates secrets)
+# 1. Run the installer (pulls images, starts the stack)
 ./install.sh                 # with Ollama (free AI summaries)
 ./install.sh --skip-ollama   # without Ollama
 
-# 2. Start
-docker compose up -d
-
-# 3. Open http://localhost:8080
+# 2. Open http://<machine-ip>:8080
 #    Login with admin / admin (change after first login!)
 ```
 
