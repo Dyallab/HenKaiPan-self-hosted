@@ -2,6 +2,21 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.8.0 — 2026-05-14
+
+### Features
+
+- **CI/CD Integration API**: New `POST /api/v1/scans/external` endpoint allows external CI/CD systems (GitHub Actions, GitLab CI, Jenkins, CircleCI) to trigger security scans via API key authentication
+- **API Token Management**: Full CRUD for API tokens at `/api/v1/tokens` (JWT auth). Tokens use `hkp_<64 hex>` format, bcrypt-hashed, shown only once at creation, with optional per-project scope
+- **GitHub Action (`dyallab/henkaipan-action`)**: Docker-based action with `fail-on-severity`, automatic PR comments, and full findings summary. Available at GitHub Marketplace
+- **Token UI in Settings**: New "API Tokens" section in Settings → Tokens with create modal (name + project scope) and token shown once on creation, revoke with confirmation
+
+### Improvements
+
+- **Shared scan creation helpers**: `resolveScanners()` and `createScanRecords()` unified between internal and external scan creation paths
+- **API versioning**: External CI/CD endpoints live at `/api/v1/scans/external` and `/api/v1/scans/{id}/status` with separate API key auth (no JWT passthrough)
+- **Documentation**: New setup guides for GitHub Actions, GitLab CI, Jenkins, CircleCI, and workflow examples for Node.js, Go, Python, and Docker stacks
+
 ## 1.7.0 — 2026-05-12
 
 ### Features
@@ -23,6 +38,7 @@ All notable changes to the self-hosted distribution are documented here.
 - **Missing `POSTGRES_*` variables**: Added `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` to `.env.example` and installer — required by the postgres container
 - **Missing `ADMIN_PASS`**: Added `ADMIN_PASS=admin` to `.env.example` so the installer's sed replacement works correctly
 - **Ollama vars always active**: Commented out `OLLAMA_URL` and `OLLAMA_MODEL` in `.env.example` so `--skip-ollama` actually disables them
+
 
 ## 1.6.0 — 2026-05-09
 
