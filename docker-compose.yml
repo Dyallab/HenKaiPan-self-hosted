@@ -94,6 +94,8 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - /tmp:/tmp
+    tmpfs:
+      - /home/worker:uid=1000,gid=1000
     read_only: true
     security_opt:
       - no-new-privileges:true

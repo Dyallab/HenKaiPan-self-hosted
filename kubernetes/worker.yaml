@@ -29,6 +29,8 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: home
+              mountPath: /home/worker
           resources:
             requests:
               memory: "1Gi"
@@ -47,4 +49,6 @@ spec:
                 - ALL
       volumes:
         - name: tmp
+          emptyDir: {}
+        - name: home
           emptyDir: {}
