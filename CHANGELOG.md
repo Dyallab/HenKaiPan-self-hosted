@@ -2,6 +2,13 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.8.2 — 2026-05-16
+
+### Fixes
+
+- **PR merge ref clone failure**: `git clone --branch refs/pull/N/merge` failed because PR refs are internal GitHub refs that don't exist in the remote. Now clones normally, then fetches the specific ref via `git fetch`
+- **Action PR comments not posting**: `PR_NUMBER` was never passed to the Docker container. Now extracted from `$GITHUB_EVENT_PATH` at runtime. `GITHUB_TOKEN` also properly passed via `env:` block
+
 ## 1.8.1 — 2026-05-15
 
 ### Fixes
