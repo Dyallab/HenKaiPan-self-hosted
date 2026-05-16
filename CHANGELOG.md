@@ -2,6 +2,20 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.8.1 — 2026-05-15
+
+### Fixes
+
+- **Migration idempotency**: Added `IF NOT EXISTS` to `CREATE TABLE` and `CREATE INDEX` in migration 035 so it can be re-run safely
+- **Advisory lock for migrations**: Acquires a `pg_advisory_lock` during `RunMigrations` to prevent concurrent runs from api and worker containers colliding
+- **Empty tokens array**: `GET /api/v1/tokens` now returns `[]` instead of `null` when no tokens exist, for consistent frontend handling
+
+### Improvements
+
+- **Branch syntax in clone URL**: Support `url#branch` syntax in project repo URLs (e.g. `https://github.com/user/repo#main`) — the specified branch is passed to `git clone --branch`
+- **Copy project ID**: Each project card now shows its UUID with a copy-to-clipboard button for quick reference
+- **Cleaner scanner UI**: Removed redundant "Via Docker" label in scanner settings
+
 ## 1.8.0 — 2026-05-14
 
 ### Features
