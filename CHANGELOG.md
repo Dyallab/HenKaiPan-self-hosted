@@ -2,6 +2,19 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.10.0 — 2026-05-17
+
+### Features
+
+- **Scanner `ExecVia` shell execution**: Scanners can now run via a shell (e.g. `sh -c '...'`) instead of direct binary execution. KICS scanner migrated to this model for complex pipeline commands
+- **Container image scanning**: New `trivy-image` and `grype-image` scanner targets for scanning Docker/container images by reference
+
+### Improvements
+
+- **Scanner environment inheritance**: Scanner processes now inherit `os.Environ()` in addition to custom env vars, fixing issues with PATH and system variables
+- **Grype DB cache directory**: Added `GRYPE_DB_CACHE_DIR=/tmp/grype-db` to grype and grype-image scanners for consistent cache behavior
+- **Friendly error messages**: Added human-readable messages for `invalid body` and `enabled required` API errors in the frontend
+
 ## 1.9.0 — 2026-05-17
 
 ### Security
