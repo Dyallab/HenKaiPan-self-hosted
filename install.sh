@@ -209,9 +209,8 @@ else
   JWT_SECRET=$(openssl rand -hex 32 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | head -c 64)
   ENC_KEY=$(openssl rand -hex 32 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | head -c 64)
 
-  # Default credentials on first run: admin / admin
-  # Change immediately after first login via Settings → Users
-  ADMIN_PASS="admin"
+  # Auto-generated UUID v4 password for default admin
+  ADMIN_PASS=$(cat /proc/sys/kernel/random/uuid 2>/dev/null || python3 -c "import uuid;print(uuid.uuid4())" 2>/dev/null || openssl rand -hex 16)
 
   cp .env.example .env
 

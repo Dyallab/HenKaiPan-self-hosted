@@ -2,6 +2,23 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.9.0 — 2026-05-17
+
+### Security
+
+- **License key signing secret embedded in binary**: The HMAC-SHA256 signing secret is now XOR-obfuscated and compiled into the API binary. Customers no longer need to set `LICENSE_SIGNING_SECRET` — only `LICENSE_KEY` is required. Prevents trivial self-licensing by removing the customer-controlled secret
+- **Default admin password no longer `admin/admin`**: First-run password is now a random UUID v4, displayed once at the end of the install script. Login form fields are empty by default
+
+### Improvements
+
+- **Simplified license setup**: `generate-license.sh` no longer requires `-s` flag or `LICENSE_SIGNING_SECRET` env var — keys are generated with the embedded binary secret
+- **Cleaner license UX**: Login page no longer pre-fills credentials; license settings page shows generic placeholder
+
+### Configuration Changes
+
+- `LICENSE_SIGNING_SECRET` environment variable removed — signing secret is embedded in the compiled binary
+- `ADMIN_PASS` defaults to auto-generated UUID v4 instead of `"admin"`
+
 ## 1.8.2 — 2026-05-16
 
 ### Fixes
