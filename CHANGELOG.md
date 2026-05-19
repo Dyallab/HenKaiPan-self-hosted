@@ -2,6 +2,18 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.12.2 — 2026-05-19
+
+### Fixes
+
+- **Admin password not updating when `ADMIN_PASS` changed in `.env`**: The default admin was seeded via SQL migration with a hardcoded hash and `ON CONFLICT DO NOTHING`, so changing the env var had no effect. The API now reads `ADMIN_USER`/`ADMIN_PASS` on every startup and upserts the admin with a fresh bcrypt hash. Changing `.env` + restart now correctly updates the password
+
+### Improvements
+
+- **Settings page restructured with tabs**: Integrations now has Scanners/Jira tabs; Notifications now has Alerts/Webhooks tabs. Reuses existing tab pattern from the app for consistency
+- **Removed dead settings fields**: Platform Name, API Base URL, and Admin Username were stored in localStorage but never consumed anywhere — removed to reduce confusion
+- **Scanner cards simplified**: Removed duplicate scanner name in card footer and meaningless green status dot. Cards now show icon, name, type badge, and description only
+
 ## 1.12.1 — 2026-05-18
 
 ### Improvements
