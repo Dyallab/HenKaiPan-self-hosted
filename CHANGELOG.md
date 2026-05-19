@@ -2,6 +2,17 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.12.1 — 2026-05-18
+
+### Improvements
+
+- **Capability-based RBAC**: Replaced hardcoded role checks with a capability matrix (`canRead`/`canWrite`). Adding new roles now requires a single line in the matrix instead of touching every route and UI component
+- **Viewer read-only access**: Viewers can now view all finding details, correlations, analysis, comments, and risk acceptance status across all projects — no longer restricted to team-owned resources
+
+### Fixes
+
+- **Ownership middleware blocked viewers from finding details**: `RequireOwnership` middleware was checking team membership for all non-admin users, but viewers are not in team_members. Now allows read-only (GET) access for viewers regardless of ownership
+
 ## 1.12.0 — 2026-05-18
 
 ### Fixes
