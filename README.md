@@ -20,7 +20,7 @@ Application Security Posture Management platform. Self-hosted edition.
 ./install.sh --skip-ollama   # without Ollama
 
 # 2. Open http://<machine-ip>:8080
-#    Login with admin / admin (change after first login!)
+#    Login with the auto-generated admin password (shown at end of install.sh)
 ```
 
 ### Kubernetes (Production)
@@ -44,7 +44,7 @@ kubectl port-forward svc/henkaipan-api 8080:8080 -n henkaipan
 ```bash
 cp .env.example .env
 # Edit .env: set JWT_SECRET, SECRET_ENCRYPTION_KEY
-# ADMIN_PASS is optional - defaults to "admin" if not set
+# ADMIN_PASS is optional - defaults to random UUID v4 if not set
 docker compose up -d
 ```
 
@@ -62,7 +62,7 @@ Optional variables:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `ADMIN_PASS` | Admin password (set on first run only) | `admin` |
+| `ADMIN_PASS` | Admin password (set on first run only) | random UUID v4 |
 | `COOKIE_SECURE` | Set `true` behind HTTPS | `false` |
 | `COOKIE_DOMAIN` | Cookie domain (e.g. `.example.com`) | empty |
 | `COOKIE_SAMESITE` | SameSite policy: `lax`, `strict`, or `none` | `lax` |
