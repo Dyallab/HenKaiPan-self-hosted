@@ -2,6 +2,22 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.12.0 — 2026-05-18
+
+### Fixes
+
+- **Rate limits too aggressive**: Increased `heavy` limit from 20 to 60 requests/min. Moved `/api/scans` from heavy to general pool (100 req/min) — normal navigation no longer triggers rate limits
+- **Ownership middleware broken for non-admin users**: `extractResourceID` only matched singular resource names (`finding`) but URLs use plural (`/api/findings/`). Fixed to match both forms. Viewers can now access finding details, scan details, and other owned resources
+- **Duplicate route groups**: Removed 3 duplicate Comments route groups (kept 1) and 2 duplicate Risk Acceptance groups (kept 1) in API router
+
+### Improvements
+
+- **Error logging**: All API errors now logged with code, message, status, and path via structured logging. Previously ~200 error responses were silent
+- **Standardized error format**: API errors now return `{ "code": "...", "message": "..." }` instead of `{ "error": "..." }`. Frontend reads `code` for programmatic handling
+- **Error detail sanitization**: Internal/database error details no longer exposed in production responses. 12 locations sanitized while preserving validation feedback
+- **Audit logging coverage**: Added audit entries for App CRUD, Project CRUD, Webhook CRUD + test, and Scan creation. Coverage now spans 10 entities with 30 audit points
+- **Frontend error handling**: API client now carries `code` and `status` on thrown errors. Finding detail page shows toast messages on load failures instead of silent "not found"
+
 ## 1.11.0 — 2026-05-18
 
 ### Features
