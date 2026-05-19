@@ -2,6 +2,24 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.13.0 — 2026-05-19
+
+### Security
+
+- **Private repo token leak fixed**: GitHub PATs were embedded in clone URLs, leaking into scan logs and process listings. Now passed via `git -c http.extraHeader=Authorization: token <token>` — no token exposure in logs or `ps` output
+- **Token validation before saving**: GitHub PATs are now validated against the GitHub API before storage. Invalid tokens are rejected with a clear error. Token scopes and expiry are captured for visibility
+- **PAT expiry tracking**: New `github_token_expires_at` field shows when a token will expire, preventing silent scan failures from expired credentials
+
+### Fixes
+
+- **Worker could not read stored tokens**: `bytea` column was scanned into `*string` instead of `[]byte`, causing `cannot scan bytea into **string` errors. Worker now correctly decrypts and uses stored tokens for private repo cloning
+- **Legacy repos page removed**: Orphaned `/dashboard/repos` page called non-existent APIs. Removed to eliminate confusion
+
+### Improvements
+
+- **Audit logging for token changes**: Setting or removing a GitHub token now creates an audit log entry (`project.token.set` / `project.token.remove`)
+- **Standalone repos table removed**: The legacy `repos` table and `repo_id` foreign keys have been dropped. Projects are now the sole unit for repository connections
+
 ## 1.12.2 — 2026-05-19
 
 ### Fixes
