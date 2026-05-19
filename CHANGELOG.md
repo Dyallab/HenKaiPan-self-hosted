@@ -2,6 +2,31 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.11.0 — 2026-05-18
+
+### Features
+
+- **Role simplification**: Reduced from 3 roles (admin/analyst/viewer) to 2 (admin/viewer). Existing analyst users are automatically migrated to viewer. Simplifies access control for early-stage self-hosted deployments
+- **Generic role guards**: New `requireRole()` utility and `data-required-role` attribute for declarative page-level and nav-level access control. Settings page now admin-only
+- **Generic config guards**: New `applyConfigGuards()` system with `data-requires-config` attribute. AI buttons (remediation, summary, validation) and email test button are automatically disabled when their providers/env vars are not configured
+- **Config status endpoint**: New `GET /api/config/status` returns availability of AI providers, email, frontend URL, and webhook secret
+
+### Improvements
+
+- **Import aliases**: All frontend imports migrated from relative paths (`../../lib/`) to path aliases (`@lib/`, `@layouts/`) for cleaner, more maintainable code
+- **Schedule visibility**: Viewers can now view schedules (read-only). Only creation, editing, and deletion remain admin-only
+- **Scan detail access**: Removed ownership check temporarily from `GET /api/scans/{id}` and `GET /api/scans/{id}/findings` to allow cross-user visibility until team/project scoping is implemented
+
+### Fixes
+
+- **Audit log action strings**: Schedule and API token actions now use dotted format (`schedule.create`, `api_token.delete`) instead of bare verbs, fixing "create undefined" display in audit log
+- **Audit log filters**: Added schedule and api_token entries to audit page filters, icons, and colors
+- **Login default values**: Removed hardcoded `value="admin"` from login form inputs
+
+### Configuration Changes
+
+- `analyst` role removed from database constraint and validation allowlist. Migration `036_remove_analyst_role.sql` converts existing analysts to viewers
+
 ## 1.10.0 — 2026-05-17
 
 ### Features
