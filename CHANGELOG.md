@@ -2,6 +2,25 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.15.0 — 2026-05-19
+
+### Features
+
+- **Project search bar**: Search projects by name, URL, or description with real-time filtering and clear button
+- **Project detail page**: New dedicated detail view for individual projects with direct access from the projects list
+- **Risk acceptance feature flag**: `features.risk_acceptance` added to config status endpoint — license-gated feature toggle
+
+### Improvements
+
+- **Rate limits increased**: General pool 100→300 req/min, auth 10→20 req/min, heavy 60→120 req/min — normal navigation no longer triggers limits
+- **Bulk actions gated by write access**: Findings page bulk operations now properly respect viewer role permissions
+- **Scan interface extended**: `project_id` field added to Scan type for better project association
+
+### Fixes
+
+- **Findings page auth race condition**: `canWrite()` called before `getCurrentUser()` completed — now awaits user load before checking permissions
+- **Finding detail page user role loading**: Switched from `api.getMe()` to `getCurrentUser()` for consistent auth state, added null guard
+
 ## 1.14.0 — 2026-05-20
 
 ### Fixes
