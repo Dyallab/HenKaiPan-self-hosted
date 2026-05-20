@@ -2,6 +2,13 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.13.1 — 2026-05-20
+
+### Fixes
+
+- **Migration 037 failed on fresh installs**: Referenced legacy `repos` table already dropped by migration 038. Removed `ALTER TABLE repos` and `DROP INDEX idx_repos_has_token` — only `projects.github_token_expires_at` is added
+- **Seed scripts incompatible with migration 038**: Both `seed-demo.sql` and `seed-100-projects.sql` inserted into `repos` table and used `repo_id` columns. Updated to insert directly into `projects` with `repo_url` as source of truth
+
 ## 1.13.0 — 2026-05-19
 
 ### Security
