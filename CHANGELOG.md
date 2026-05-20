@@ -2,6 +2,18 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.14.0 — 2026-05-20
+
+### Fixes
+
+- **Private repo clone failing with stored tokens**: `http.extraHeader` was not working for GitHub PATs in Alpine containers. Switched to URL-based token auth (`https://<TOKEN>@github.com/...`) — the most reliable method for HTTPS cloning with PATs
+- **Findings page stuck on loading**: `loadFindings()` had no error handling — API failures left the page showing "Loading..." indefinitely. Added try/catch with error UI and retry button
+- **SQL correlation errors**: `pgx` could not infer type for NULL `*string` parameters (`$5 IS NOT NULL`). Fixed with explicit `$5::text` cast. Also handled `pgx.ErrNoRows` gracefully in `GetProjectGitHubToken`
+
+### Improvements
+
+- **Scans page simplified**: Removed "Or enter URL directly" input — scans now require selecting an app or project from the combobox, enforcing the project-first workflow
+
 ## 1.13.1 — 2026-05-20
 
 ### Fixes
