@@ -2,6 +2,25 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.16.0 — 2026-05-20
+
+### Features
+
+- **SCA cross-scanner correlation**: Findings from trivy, grype, and osv-scanner are now automatically correlated within the same scan batch by CVE ID, rule ID, and package name
+- **Package-based matching**: SCA findings correlate by `pkg_name` even when scanners report different vulnerability IDs (e.g. GHSA-xxx vs CVE-xxx for the same package)
+- **Confidence score exposed**: `confidence_score` and `corroboration_count` now visible in the API and UI — findings corroborated by multiple scanners get higher scores (0.5 base → 1.0 with full corroboration)
+- **Corroborating scanners display**: Findings list shows which specific scanners corroborate each finding (e.g. "trivy, grype")
+- **Correlation reason detection**: Finding detail page explains WHY findings are correlated (CVE match, package match, rule match, same file)
+
+### Improvements
+
+- **Credibility sorting now functional**: Sort by confidence score or corroboration count — previously the fields were not serialized in JSON responses
+- **Scanner parsers enriched**: Trivy, grype, and osv-scanner parsers now extract package name and version for correlation
+
+### Fixes
+
+- **confidence_score and corroboration_count not sent to frontend**: Model fields had `json:"-"` tags, preventing the API from returning them. Changed to proper JSON serialization — all existing UI badges and sorting now work
+
 ## 1.15.0 — 2026-05-19
 
 ### Features
