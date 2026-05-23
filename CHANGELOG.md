@@ -2,6 +2,34 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.17.0 — 2026-05-22
+
+### Features
+
+- **Vulnerability model — cross-batch correlation & dedup**: Replaced findings-as-primary with vulnerabilities-as-primary. Each real vulnerability (GHSA, CVE, secret hash, etc.) is now a single canonical row with N linked findings as evidence across scans and batches
+- **Deterministic vuln_uid per engine**: SCA, Secrets, SAST, IaC, Containers, and DAST each compute a stable `vuln_uid` (SHA-256 based) so the same vulnerability is recognized regardless of which scanner reports it or when
+- **Automatic vulnerability linking**: Worker now upserts vulnerabilities and links findings in real-time as scan results arrive — no manual correlation needed
+- **Backfill on startup**: Existing findings are automatically backfilled into vulnerabilities on worker startup (batched, non-blocking)
+- **Cross-batch confidence scoring**: Confidence now considers corroborating scanners across ALL scans in a project, not just within a single batch (formula: `0.5 + 0.5 * (uniqueScanners - 1) / uniqueScanners`)
+- **Version check endpoint**: `GET /api/version/check` detects new versions available in GHCR for update notifications
+
+### Improvements
+
+- **Vulnerabilities page migrated to new table**: `/dashboard/vulns` now uses the canonical `vulnerabilities` table — shows engine type, confidence score, scanner coverage, and expands to individual findings
+- **Repository layer refactored**: Migrated from positional SQL params (`$1, $2...`) to `pgx.NamedArgs` (`@name`) — eliminates off-by-one parameter bugs, self-documenting queries
+- **Repository interface cleanup**: Audit, knowledge, notification, projects, schedules, settings, and webhook repositories unified with consistent patterns
+- **Frontend API client extended**: New `vulnerabilities` API methods, improved error handling with `code` and `status` properties
+- **Dashboard layout updated**: Navigation and sidebar improvements for vulnerabilities section
+
+### Fixes
+
+- **Duplicate vulnerabilities removed**: Old `vulnerabilities.go` repository replaced with new implementation (`vulnerability_new.go`) — eliminates conflicting correlation logic
+- **Docker builds optimized**: API and worker Dockerfiles streamlined for faster builds
+
+### Configuration Changes
+
+- **Migration 040**: New `vulnerabilities` table with unique index on `(project_id, vuln_uid)`, `vulnerability_id` FK added to `findings` table
+
 ## 1.16.0 — 2026-05-20
 
 ### Features
