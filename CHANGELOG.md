@@ -2,6 +2,25 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.18.0 — 2026-05-25
+
+### Features
+
+- **Vulnerability status management**: New `PATCH /api/vulnerabilities/{id}/status` endpoint for changing individual vulnerability status (open, in_review, accepted_risk, fixed, verified) — gated behind admin role, with validation and full updated object returned
+
+### Improvements
+
+- **Status dropdown on vulnerabilities page**: Each vulnerability row now has an inline status selector for rapid triage without leaving the list — updates persist immediately via the new API
+- **Project filter on vulnerabilities page**: New project dropdown filter scopes the vulnerability list to a specific project — leverages existing `?project_id=` query parameter support
+- **Breadcrumb navigation added**: Breadcrumbs on the vulnerabilities page (Dashboard → Vulnerabilities) and finding detail page (Findings → Vulnerability → ID) for clearer orientation
+- **Vulnerability context in finding detail**: Finding detail page now shows a "Vulnerability Context" card when the finding belongs to a vulnerability, with a direct link to the vulnerabilities page
+- **Finding model enriched**: `vulnerability_id` field added to the Finding API response, enabling frontend features that reference parent vulnerabilities
+- **Frontend API client extended**: New `updateVulnerabilityStatus` method, `projectId` parameter on `getVulnerabilities`, and `vulnerability_id` field on the Finding TypeScript interface
+
+### Fixes
+
+- **No user-facing fixes in this release**
+
 ## 1.17.0 — 2026-05-22
 
 ### Features
