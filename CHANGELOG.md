@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.19.1 — 2026-05-29
+
+### Fixes
+
+- **MCP SSE endpoint event format**: `SSEClientTransport` (used by OpenCode, Claude Desktop, and Cursor) expects the SSE `endpoint` event data to be a plain URL string. Previous JSON-wrapped format (`{"endpoint":"/v1/mcp?...","session_id":"..."}`) caused malformed POST URLs and connection failures. Fixed by sending `/v1/mcp?session_id=xxx` as plain URL data.
+
 ## 1.19.0 — 2026-05-28
 
 ### Features
