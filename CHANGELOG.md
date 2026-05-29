@@ -2,6 +2,23 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.19.0 — 2026-05-28
+
+### Features
+
+- **MCP Server for LLM Integration**: New `/v1/mcp` endpoint with SSE transport exposing 7 tools (`list_projects`, `create_project`, `trigger_scan`, `get_scan_status`, `query_findings`, `get_vulnerabilities`, `get_dashboard_summary`). Auth via existing `X-API-Key` tokens. Compatible with Claude Desktop, Cursor, and OpenCode.
+
+### Security
+
+- **MCP session isolation**: Token-to-session binding prevents session hijacking — each POST must use the same API token that created the SSE session
+- **MCP per-token session limit**: Max 5 concurrent SSE sessions per API token prevents resource exhaustion from unbounded connections
+- **Dynamic corroboration_count**: Removed physical column writes; computed via subquery counting distinct scanners among findings linked to the same `vulnerability_id` — eliminates stale data and redundant UPDATE writes
+
+### Documentation
+
+- **MCP integration guide**: Full setup guide at `HenKaiPan-docs/src/app/architecture/mcp-integration.md` covering Claude Desktop, Cursor, and OpenCode configuration
+- **E2E correlation test**: New `scripts/e2e-vulnerability-correlation.sql` — seeds 3 scan batches with overlapping vuln_uids and verifies dedup, confidence progression, scanner_coverage accumulation, and uncoupled finding independence
+
 ## 1.18.0 — 2026-05-25
 
 ### Features
