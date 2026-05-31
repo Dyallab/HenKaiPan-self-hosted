@@ -2,6 +2,17 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.20.0 — 2026-05-31
+
+### Features
+
+- **Scanner Health Dashboard**: New `GET /api/metrics/scanner-health` endpoint returning per-scanner metrics (total scans, success rate, avg duration, last success/failure). Admin-only page at `/dashboard/scanner-health` with overview cards, metrics table with color-coded success bars, and 60s auto-refresh
+- **Scan Coverage endpoint**: New `GET /api/coverage` endpoint showing projects without recent scans. Frontend badges ("Never Scanned", "Xd ago", "Recent") and "Needs Coverage" filter on Projects page
+
+### Improvements
+
+- **CI build caching**: Worker Dockerfile consolidated all 9 scanner binary downloads into a single deterministic RUN with pinned versions. Eliminated `curl | sh` install scripts (trivy, grype) and `latest/download` URLs (osv-scanner, tfsec). Docker layer caching via `cache-from: type=gha` now reduces CI build time from ~10 minutes to ~30 seconds on cache hit
+
 ## 1.19.1 — 2026-05-29
 
 ### Fixes
