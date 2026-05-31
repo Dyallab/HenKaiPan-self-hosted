@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.20.3 — 2026-05-31
+
+### Fixes
+
+- **MCP Streamable HTTP only**: Removed legacy SSE transport. MCP endpoint now only supports Streamable HTTP (POST only, GET returns 405). Session via `MCP-Session-Id` header. Clean implementation without backward compatibility code.
+
 ## 1.20.2 — 2026-05-31
 
 ### Fixes
