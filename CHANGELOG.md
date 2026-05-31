@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.20.1 — 2026-05-31
+
+### Fixes
+
+- **MCP Streamable HTTP transport**: Migrated MCP endpoint from deprecated SSE transport (2024-11-05) to Streamable HTTP (2025-03-26+). POST now returns JSON responses directly instead of 202 + SSE stream. Session management via `MCP-Session-Id` header. GET returns 405. Fixes compatibility with OpenCode and other modern MCP clients.
+
 ## 1.20.0 — 2026-05-31
 
 ### Features
