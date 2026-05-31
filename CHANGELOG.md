@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.20.2 — 2026-05-31
+
+### Fixes
+
+- **MCP dual transport support**: MCP endpoint now supports both SSE transport (legacy, for OpenCode/Claude Desktop) and Streamable HTTP (2025-03-26+). GET with `Accept: text/event-stream` opens SSE stream. POST with `session_id` query param uses SSE legacy. POST with `MCP-Session-Id` header uses Streamable HTTP. Backward compatible with all MCP clients.
+
 ## 1.20.1 — 2026-05-31
 
 ### Fixes
