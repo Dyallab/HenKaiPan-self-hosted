@@ -2,6 +2,18 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.20.4 — 2026-06-01
+
+### Fixes
+
+- **MCP session context fix**: Session context was tied to the HTTP request lifecycle (`r.Context()`), causing all sessions to be immediately invalid after initialization. Changed to `context.Background()` so sessions persist correctly across requests. Sessions were unusable — every subsequent request returned "session not found or expired".
+- **MCP rate limit**: Re-added session rate limit (10 per token) to prevent resource leaks. Previous limit of 5 was removed in v1.20.3.
+- **API key last_used tracking**: Moved `UpdateLastUsed` inside the auth middleware so it fires on every authenticated request, not just external scan creation. Failed auth no longer leaks partial token data due to misplaced indentation.
+
+### Documentation
+
+- **MCP integration docs**: Rewrote from SSE to Streamable HTTP transport. Updated all examples (curl, config snippets), protocol description, troubleshooting table, and authentication section. Added OpenCode auto-detection note.
+
 ## 1.20.3 — 2026-05-31
 
 ### Fixes
