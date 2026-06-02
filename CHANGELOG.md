@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.20.5 — 2026-06-02
+
+### Fixes
+
+- **GetByID query missing argument**: The `GetByID` function was not passing the finding ID to the SQL query (`WHERE f.id = $1` was called without the `id` argument). This caused pgx to return "expected 1 arguments, got 0", which the handler treated as "finding not found" for all findings. The detail view, risk-acceptance, correlations, summary, analysis, Jira, and comment endpoints were all affected.
+
 ## 1.20.4 — 2026-06-01
 
 ### Fixes
