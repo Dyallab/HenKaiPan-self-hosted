@@ -2,11 +2,23 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
-## 1.20.5 — 2026-06-02
+## 1.21.0 — 2026-06-05
+
+### Features
+
+- **AI notification summaries**: Finding alert emails and SLA breach notifications now include an AI-generated summary block explaining what the vulnerability means and how to address it. Uses the configured `AI_SUMMARY_PROVIDER` (Ollama, OpenRouter, or Cloudflare).
+- **AI weekly digest narrative**: The weekly executive digest now opens with a 3–5 sentence AI-generated narrative summarizing the most critical findings, SLA compliance, and trends for the period.
+- **Finding assignment with notifications**: The `assigned_to` field is now properly wired in `PATCH /api/findings/:id`. When a finding is assigned to a user, an in-app notification, SSE event, and email are dispatched — including the AI summary if available.
+
+### Improvements
+
+- **Digest configuration**: `NotificationSettings` now includes `digest_frequency` (`weekly`/`daily`/`disabled`) and `digest_time` fields (migration 042). Configurable via API and settings UI.
 
 ### Fixes
 
-- **GetByID query missing argument**: The `GetByID` function was not passing the finding ID to the SQL query (`WHERE f.id = $1` was called without the `id` argument). This caused pgx to return "expected 1 arguments, got 0", which the handler treated as "finding not found" for all findings. The detail view, risk-acceptance, correlations, summary, analysis, Jira, and comment endpoints were all affected.
+- **Ollama model compatibility**: `NumPredict` increased from 512 to 2048 tokens. Models with reasoning phases (qwen3.5, deepseek-r1) no longer return empty responses when the thinking phase exhausts the token budget.
+- **Ollama HTTP timeout**: Increased from 60s to 180s to accommodate cold-start model loading on modest hardware.
+- **Notification list query**: Fixed dynamic `$N` parameter numbering in `List()` — no longer breaks when `read` filter is absent.
 
 ## 1.20.4 — 2026-06-01
 
