@@ -2,6 +2,28 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.22.0 — 2026-06-11
+
+### Improvements
+
+- **Finding detail page performance overhaul**: Eliminated `git clone` from the HTTP request path (moved to background worker). Added Redis caching layer for finding detail data with automatic invalidation. Created a composite endpoint (`GET /api/findings/{id}/detail`) that collapses 5+ API calls into a single response. API response time dropped from ~20s to <10ms.
+
+### Fixes
+
+- **Duplicate route registration**: Removed duplicate `GET /api/findings/{id}/risk-acceptance` route that could bypass license enforcement in certain configurations.
+- **SSE memory leak**: Fixed event handler accumulation on the finding detail page — each page visit no longer stacks additional handlers.
+- **SSE over-fetching**: The `finding_summary_completed` event now only re-fetches the finding data instead of reloading the entire page.
+
+### Configuration Changes
+
+- **`ENABLE_PPROF`**: New environment variable (default `false`). When set to `true`, exposes Go pprof profiling endpoints at `/debug/pprof/` for runtime diagnostics.
+- **pnpm version pinned**: Docker build now uses pnpm `10.32.1` (pinned via `corepack prepare`) for reproducible builds.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.22.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.22.0`
+
 ## 1.21.0 — 2026-06-05
 
 ### Features
