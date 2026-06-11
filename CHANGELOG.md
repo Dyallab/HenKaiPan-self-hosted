@@ -2,6 +2,28 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.23.0 — 2026-06-11
+
+### Features
+
+- **Project tags**: Projects can now be tagged with custom labels for organization and filtering.
+- **Security scores**: Dashboard now displays security scores per project, computed from finding severity distribution.
+- **Report scheduling**: Configurable report generation with schedule (weekly/daily) and delivery channels (email/slack).
+
+### Improvements
+
+- **Knowledge articles**: Improved slug generation with SHA256 fallback for title-only articles. Fixed tag handling.
+- **Bulk findings export**: Added `normalizeFindingForDisplay` to list and export endpoints for consistent snippet display.
+
+### Fixes
+
+- **Knowledge article tags**: Fixed tag filtering in article search and display.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.23.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.23.0`
+
 ## 1.22.0 — 2026-06-11
 
 ### Improvements
