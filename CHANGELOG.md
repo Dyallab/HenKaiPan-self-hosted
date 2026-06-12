@@ -2,6 +2,34 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.24.0 — 2026-06-12
+
+### Features
+
+- **Bulk findings actions**: Findings list now supports multi-select for batch status changes, assignee updates, and bulk notes. The `PATCH /api/findings/bulk` endpoint now correctly passes `assigned_to` and `notes` fields in addition to status. Includes audit logging and ownership notifications.
+- **Slack Interactive Bot**: New `cmd/bot` binary that connects to Slack via Socket Mode. Supports interactive triage directly from Slack notifications:
+  - **Acknowledge**: Mark finding as "In Review" with one click
+  - **Dismiss**: Mark finding as "Accepted Risk"
+  - **Assign**: Opens a user select modal to assign the finding
+  - Configured via `SLACK_APP_TOKEN`, `SLACK_BOT_TOKEN`, `API_BASE_URL`, `API_TOKEN` environment variables.
+
+### Improvements
+
+- **Dev environment**: Migrated to Nix flake for reproducible development shells. Replaced `air` config files with Nix-based hot-reload targets. Added `nix run .#{target}` commands for dev-infra, dev-api, dev-worker, dev-frontend, tests, and build.
+
+### Release & Distribution
+
+- **Bot binary**: `make build-bot` and `make build` now compile `bin/bot` from `cmd/bot/main.go`.
+
+### Configuration Changes
+
+- **Slack Bot env vars**: New optional environment variables: `SLACK_APP_TOKEN`, `SLACK_BOT_TOKEN`, `API_BASE_URL`, `API_TOKEN` for Slack Socket Mode integration.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.24.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.24.0`
+
 ## 1.23.0 — 2026-06-11
 
 ### Features
