@@ -2,6 +2,17 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.24.2 — 2026-06-15
+
+### Fixes
+
+- **Project detail page renders no data**: The `/api/metrics/security-score` route was never registered in `cmd/api/main.go`, causing a 404 that rejected the page's `Promise.all` and hid all project information. Added the missing route registration.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.24.2`
+- `ghcr.io/dyallab/henkaipan-worker:1.24.2`
+
 ## 1.24.1 — 2026-06-15
 
 ### Fixes
