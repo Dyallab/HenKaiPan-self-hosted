@@ -2,7 +2,7 @@
 
 Application Security Posture Management platform. Self-hosted edition.
 
-📚 **Documentation**: [Quickstart](https://henkaipan.dyallab.com.ar/docs/quickstart/) | [Licensing](https://henkaipan.dyallab.com.ar/docs/licensing/) | [Backup & Restore](https://henkaipan.dyallab.com.ar/docs/backup/)
+📚 **Documentation**: [Quickstart](https://henkaipan.dyallab.com.ar/docs/quickstart/) | [Backup & Restore](https://henkaipan.dyallab.com.ar/docs/backup/)
 
 ## Prerequisites
 
