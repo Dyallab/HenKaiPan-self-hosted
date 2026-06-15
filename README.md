@@ -75,19 +75,13 @@ For Kubernetes deployments, environment variables are configured via `ConfigMap`
 
 ### AI Providers
 
-The self-hosted edition supports multiple AI providers with different capabilities:
+The self-hosted edition supports multiple AI providers:
 
-**Free tier (no license key):**
-- **Ollama** (FREE, self-hosted) — Summary ONLY. Set `OLLAMA_URL` and `OLLAMA_MODEL`
-- Summary generation for findings is available without a license key
-
-**Paid features (require license key with `ai-remediation` feature):**
-- **Remediation** — Automated fix suggestions via OpenRouter, Cloudflare, or Ollama
-- **Validation** — AI-powered false positive detection
+- **Ollama** (free, self-hosted) — Set `OLLAMA_URL` and `OLLAMA_MODEL`
+- **OpenRouter** — Set `OPENROUTER_API_KEY` and `OPENROUTER_MODEL`
+- **Cloudflare Workers AI** — Set `CF_ACCOUNT_ID` and `CF_API_TOKEN`
 
 Configure providers per task using `AI_REMEDIATION_PROVIDER`, `AI_SUMMARY_PROVIDER`, and `AI_VALIDATION_PROVIDER`.
-
-For a license key, contact **sales@dyallab.com.ar**.
 
 ### Monitoring
 
@@ -126,17 +120,15 @@ Redis-based rate limiting is enabled by default with per-endpoint tiers:
 
 Rate limit headers (`X-RateLimit-*`) are included in responses. The system fails open on Redis errors.
 
-## License Key
+## Features
 
-The app runs in **free mode** without a license key — no time limit. Features available:
-
+All features are available without restrictions:
 - Unlimited projects & users
 - All scanners (SAST, SCA, Secrets, IaC, Containers)
 - Findings triage, SLA tracking, vulnerability inventory
-- Webhooks
-- **AI Summary** (via Ollama)
-
-For paid features (scheduling, policies, compliance, **AI remediation & validation**, integrations), request a license key at **sales@dyallab.com.ar**.
+- AI Remediation, Summary, and Validation
+- Scan scheduling, policies, compliance frameworks
+- Webhooks, integrations (Jira, GitHub, Slack), email notifications
 
 ## Updating
 
@@ -253,5 +245,5 @@ For detailed production deployment instructions, see the [production deployment 
 ## Support
 
 - **Documentation**: https://henkaipan.dyallab.com.ar/docs/
-- **Sales & Licensing**: sales@dyallab.com.ar
+- **Email**: henkaipan@dyallab.com.ar
 - **GitHub Issues**: Report bugs or feature requests

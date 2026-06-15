@@ -24,7 +24,7 @@ data:
   COOKIE_SECURE: "false"
   
   # AI Provider - Ollama (free, self-hosted)
-  # Summary only in free tier; remediation requires license key
+  # Ollama provides AI summaries and remediation
   OLLAMA_URL: "http://ollama:11434"
   OLLAMA_MODEL: "gemma4:e4b"
   AI_SUMMARY_PROVIDER: "ollama"
