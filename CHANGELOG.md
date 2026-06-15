@@ -2,6 +2,21 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.25.0 — 2026-06-15
+
+### Features
+
+- **Auto-create projects from GitHub Action**: The external scan endpoint (`POST /api/v1/scans/external`) now supports auto-creating standalone projects when `project_id` is omitted. The API derives `owner/repo` from the `repo_url` and creates the project on first scan. No manual project setup needed for CI/CD integration.
+
+### Improvements
+
+- **GitHub Action v1.5.0**: `project-id` is now optional. New `auto-create-project` input (default: `true`). The action passes the repo URL to the API, which handles get-or-create by project name. Minimal workflow — only `api-url` and `api-key` required.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.25.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.25.0`
+
 ## 1.24.2 — 2026-06-15
 
 ### Fixes
