@@ -2,6 +2,37 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.27.0 — 2026-06-15
+
+### Release & Distribution
+
+- **MIT License and community templates**: Repository now includes MIT License and community contribution templates (issue forms, PR template) for open source contributions.
+- README updated: Open source badges, quick start guide, and public repository links added to reflect the project's open source transition.
+
+### Features
+
+- **Cloud/SaaS pricing tiers**: Landing page updated with cloud/SaaS pricing section alongside the free self-hosted offering.
+
+### Fixes
+
+- CI workflow no longer uses placeholder fallback for `HENKAIPAN_API_URL`.
+
+### Documentation
+
+- Removed stale Licensing link from self-hosted README.
+- Annotated removed license system in app changelog and checklist.
+
+### Configuration Changes
+
+- Nix flake (`flake.nix` + `flake.lock`) added for reproducible development environment in landing repo.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.27.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.27.0`
+
+---
+
 ## 1.26.0 — 2026-06-15
 
 ### Breaking Changes
