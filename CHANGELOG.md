@@ -2,6 +2,31 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.26.0 — 2026-06-15
+
+### Breaking Changes
+
+- **License system removed**: All features are now free with no license key required. The `LICENSE_KEY` and `LICENSE_SIGNING_SECRET` env vars are no longer used. Previously gated features (scheduling, policies, compliance, AI remediation, integrations, teams, comments, audit log, risk acceptance, reports, email notifications) are now available to everyone without restrictions.
+- **`/api/license` endpoint removed**: The license status endpoint no longer exists. Frontend license management UI and upgrade banners removed.
+
+### Configuration Changes
+
+- `LICENSE_KEY` and `LICENSE_SIGNING_SECRET` removed from `.env.example` and Kubernetes secrets/configmap. The signing secret is no longer embedded in the binary.
+- New optional env var: `OPENROUTER_SITE_URL` — HTTP-Referer header for OpenRouter requests (default: `https://henkaipan.app`).
+
+### Documentation
+
+- Licensing documentation removed from HenKaiPan-docs. Quickstart, operations, production, and Kubernetes guides updated to remove license key references and sales contacts.
+- Landing page pricing section removed. All features presented as free.
+- README updated: "All features are available without restrictions."
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.26.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.26.0`
+
+---
+
 ## 1.25.0 — 2026-06-15
 
 ### Features
