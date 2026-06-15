@@ -2,6 +2,22 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.24.1 — 2026-06-15
+
+### Fixes
+
+- **Bulk project import silently failing**: GitHub org imports (`POST /api/projects/bulk`) with patterns like `org/*` appeared to succeed but reported all repos as "skipped (already exist)" without creating them. Root cause: the `projects.tags` column has `NOT NULL DEFAULT '{}'`, but the bulk import handler passed `nil` (Go zero value) for Tags, which pgx encoded as SQL `NULL`. PostgreSQL's `ON CONFLICT DO NOTHING` does not absorb `NOT NULL` violations, causing the multi-row INSERT to silently fail. Fixed by adding `defaultTags()` helper to ensure empty array `{}` instead of `NULL` across all project creation paths.
+
+### Improvements
+
+- **MCP implicit sessions**: MCP clients no longer need to provide a session ID header on every request. If no session header is present, an implicit session is auto-created from the API token, simplifying MCP client integration.
+- **CI self-scan**: Added a `security` job to the CI/CD workflow using `dyallab/henkaipan-action` to automatically scan the codebase on pull requests.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.24.1`
+- `ghcr.io/dyallab/henkaipan-worker:1.24.1`
+
 ## 1.24.0 — 2026-06-12
 
 ### Features
