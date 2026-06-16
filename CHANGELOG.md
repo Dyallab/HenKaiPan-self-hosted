@@ -2,6 +2,24 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.28.1 — 2026-06-16
+
+### Improvements
+
+- **CI security gate**: Security scan job now blocks Docker image builds. The `security` job runs after `test` + `check-migrations`; `api` and `worker` builds depend on `security` passing first.
+- **Telemetry endpoint hardcoded**: Removed `HENKAIPAN_TELEMETRY_ENDPOINT` env var — endpoint is always `https://telemetry.dyallab.com.ar/api/ping`. This simplifies configuration since there is only one valid telemetry endpoint.
+
+### Configuration Changes
+
+- Removed `HENKAIPAN_TELEMETRY_ENDPOINT` env var (no longer user-configurable).
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.28.1`
+- `ghcr.io/dyallab/henkaipan-worker:1.28.1`
+
+---
+
 ## 1.28.0 — 2026-06-16
 
 ### Features
