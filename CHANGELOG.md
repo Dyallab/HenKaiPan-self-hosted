@@ -15,7 +15,7 @@ All notable changes to the self-hosted distribution are documented here.
 
 ### Configuration Changes
 
-- New `.env` variables: `HENKAIPAN_MAX_PROJECTS`, `HENKAIPAN_MAX_USERS`, `HENKAIPAN_MAX_AI_SCANS`, `HENKAIPAN_TELEMETRY_ENABLED`, `HENKAIPAN_TELEMETRY_ENDPOINT`.
+- New `.env` variables: `HENKAIPAN_MAX_PROJECTS`, `HENKAIPAN_MAX_USERS`, `HENKAIPAN_MAX_AI_SCANS`, `HENKAIPAN_TELEMETRY_ENABLED`.
 
 ### Docker Images
 
