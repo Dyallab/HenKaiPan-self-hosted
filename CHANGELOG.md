@@ -2,6 +2,28 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.28.0 — 2026-06-16
+
+### Features
+
+- **Tier limits**: New `HENKAIPAN_MAX_PROJECTS`, `HENKAIPAN_MAX_USERS`, and `HENKAIPAN_MAX_AI_SCANS` env vars for managed deployments. Limits are enforced server-side on project/user creation and AI scan requests. Set to `-1` (default) for unlimited. New `GET /api/limits` endpoint exposes current usage and caps to authenticated users.
+- **Anonymous telemetry**: Optional daily usage ping to `telemetry.dyallab.com.ar` with instance ID, version, project/user/scan counts. Enabled by default, opt-out via `HENKAIPAN_TELEMETRY_ENABLED=false`.
+
+### Security
+
+- **Auth on tier limits endpoint**: `GET /api/limits` now requires authentication (admin or viewer role).
+
+### Configuration Changes
+
+- New `.env` variables: `HENKAIPAN_MAX_PROJECTS`, `HENKAIPAN_MAX_USERS`, `HENKAIPAN_MAX_AI_SCANS`, `HENKAIPAN_TELEMETRY_ENABLED`, `HENKAIPAN_TELEMETRY_ENDPOINT`.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.28.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.28.0`
+
+---
+
 ## 1.27.0 — 2026-06-15
 
 ### Release & Distribution
