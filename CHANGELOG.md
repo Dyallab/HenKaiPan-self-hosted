@@ -2,6 +2,25 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.29.1 — 2026-06-16
+
+### Documentation
+
+- **README simplified**: Reduced from 250 to 33 lines — all details now live at [henkaipan.dyallab.com.ar/docs](https://henkaipan.dyallab.com.ar/docs/). Removed duplicated Configuration, Security, Rate Limiting, and Production Checklist sections.
+- **Production checklist unified**: Merged 6 missing environment variables from README into the web docs checklist (`COOKIE_DOMAIN`, `COOKIE_SAMESITE`, `CORS_ALLOWED_ORIGINS`, `TRUSTED_PROXIES`, `PUBLIC_API_BASE`, credential rotation).
+- **CI/CD quickstart simplified**: Collapsed 3 nearly-identical Node.js/Python/Go workflow examples into one generic example with language-specific comments. Bumped Go version from 1.22 to 1.26.
+- **MCP integration doc exported**: `mcp-integration.md` now properly exported from `@dyallab/docs` package.
+- **CircleCI example fixed**: Removed pipeline parameters with empty defaults — uses environment variables instead.
+
+### Fixes
+
+- **Removed deprecated `X-XSS-Protection` header**: The header was deprecated by MDN and is ignored by modern browsers. `Content-Security-Policy` (already present) is the correct XSS defense. Removed from middleware, tests, and all documentation.
+- **Fixed self-referencing links** in docs quickstart page.
+
+### Configuration Changes
+
+- **Backup script**: New `scripts/backup.sh` — auto-detects Docker Compose or Kubernetes deployment and runs `pg_dump`. Falls back with a clear error if neither is detected. Replaces the previously-documented but non-existent script.
+
 ## 1.29.0 — 2026-06-16
 
 ### Security
@@ -674,7 +693,7 @@ All notable changes to the self-hosted distribution are documented here.
 - **no-new-privileges**: Applied to all services
 - **Docker socket removed**: Worker no longer mounts `/var/run/docker.sock`
 - **Scanner binary execution**: Scanners run as binaries via `os/exec` (no Docker)
-- **Security headers**: CSP, X-Frame-Options, X-XSS-Protection, HSTS on all API responses
+- **Security headers**: CSP, X-Frame-Options, HSTS on all API responses
 - **Input validation**: Backend (go-playground/validator) + Frontend (Zod) on all endpoints
 - **IDOR prevention**: Ownership middleware on all resource endpoints with admin bypass
 - **JWT hardening**: No default secret, expiration required, SetSecret() enforcement
