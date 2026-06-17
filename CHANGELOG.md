@@ -2,6 +2,36 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.29.0 — 2026-06-16
+
+### Security
+
+- **Team-scoped access control**: Viewers now see only data belonging to their assigned teams. Admins continue to see everything. All list endpoints (scans, findings, apps, projects), metrics, exports, and SLA summaries are filtered by team membership. Cross-team resource access returns 403 even by direct ID. This replaces the previous viewer+GET bypass that allowed viewers to see all data.
+- **SSRF protection on git targets (R001)**: Scan targets are validated against an allowlist (`github.com`, `gitlab.com`, `bitbucket.org`). Non-HTTPS URLs, localhost, RFC1918 private IPs, and unknown hosts are rejected. DNS resolution is performed at validation time to prevent rebinding attacks. Applied at both handler and worker layers for defense-in-depth.
+- **Session invalidation via token version (R002, R003)**: JWT tokens now include a `tok_ver` claim tied to a per-user `token_version` column. Password changes, email changes, and admin-initiated password resets increment the version, immediately invalidating all existing sessions. Password changes require `current_password` verification. A dedicated `POST /api/users/{id}/reset-password` endpoint exists for admin resets, with notification to the affected user.
+- **Role change hardening (R002)**: Changing a user's role now requires the admin's `current_password` for re-authentication. The affected user receives email notification about the role change (which admin, from which IP).
+- **Email change verification (R004)**: Changing a user's email requires `current_password` verification, bumps the token version (invalidating sessions), and sends notification to BOTH the old and new email addresses.
+- **Cookie Secure flag (R005)**: The `aspm_token` cookie now defaults to `Secure=true`. Existing deployments should review their TLS configuration.
+- **Login rate limiting (R006)**: `POST /api/auth/login` is rate-limited per username (5 attempts/15min) and per IP (10 attempts/15min) via Redis counters. Returns `429 Too Many Requests` with `Retry-After` header when throttled.
+- **X-Forwarded-For validation (R007)**: Trusted proxy CIDRs can be configured via `TRUSTED_PROXIES` env var (comma-separated). When configured, only `X-Forwarded-For` values from trusted proxies are respected for client IP determination.
+- **Webhook DNS rebinding protection (R008)**: Webhook URL validation now resolves hostnames and verifies all resolved IPs are public (not loopback, link-local, or RFC1918).
+- **Duplicate route removed (R009)**: A duplicate `GET /api/findings/{id}/jira` route that bypassed ownership checks has been removed.
+
+### Improvements
+
+- **Rate limiting package**: Extracted to `internal/ratelimit/` as generic `CheckRateLimit` with fixed-window counters. Separate from the existing token-bucket Lua script for API rate limiting.
+- **Login single-query consolidation**: `GetCredentials` now returns a `Credentials` struct including `token_version`, eliminating the separate `GetTokenVersion` call during login.
+
+### Configuration Changes
+
+- New `.env` variable: `TRUSTED_PROXIES` — comma-separated CIDRs for trusted reverse proxy IPs (e.g. `10.0.0.0/8,192.168.0.0/16`). When not set, `X-Forwarded-For` behavior is backward-compatible.
+- Changed default: `COOKIE_SECURE` now defaults to `true` (was `false`).
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.29.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.29.0`
+
 ## 1.28.1 — 2026-06-16
 
 ### Improvements
