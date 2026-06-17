@@ -63,7 +63,8 @@ Optional variables:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ADMIN_PASS` | Admin password (set on first run only) | random UUID v4 |
-| `COOKIE_SECURE` | Set `true` behind HTTPS | `false` |
+| `TRUSTED_PROXIES` | Comma-separated CIDRs for trusted reverse proxies (e.g. `10.0.0.0/8,192.168.0.0/16`) | empty (X-Forwarded-For behavior is backward-compatible) |
+| `COOKIE_SECURE` | Set `false` for localhost/dev without TLS | `true` |
 | `COOKIE_DOMAIN` | Cookie domain (e.g. `.example.com`) | empty |
 | `COOKIE_SAMESITE` | SameSite policy: `lax`, `strict`, or `none` | `lax` |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated allowed origins | localhost origins |
@@ -141,11 +142,12 @@ Migrations run automatically on startup. See the [deployment guide](https://henk
 
 ## Production Checklist
 
-- [ ] Set `COOKIE_SECURE=true` (REQUIRED behind HTTPS)
+- [ ] Set `COOKIE_SECURE=false` if testing without TLS (now defaults to `true`)
 - [ ] Set `COOKIE_DOMAIN=.example.com` for your domain
 - [ ] Set `COOKIE_SAMESITE=lax` (default) or `strict` for stricter CSRF protection
 - [ ] Set `CORS_ALLOWED_ORIGINS=https://aspm.example.com` (comma-separated if multiple)
 - [ ] Configure reverse proxy (nginx/caddy/traefik) with TLS termination
+- [ ] Set `TRUSTED_PROXIES` if behind a reverse proxy (e.g. `10.0.0.0/8`) for correct client IP detection
 - [ ] Set `PUBLIC_API_BASE=` (empty) in frontend, or serve API + frontend from same origin
 - [ ] Set up database backups
 - [ ] Configure email notifications (SMTP)
