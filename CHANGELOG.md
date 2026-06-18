@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.30.1 — 2026-06-18
+
+### Fixes
+
+- **MCP response format**: Handlers now use `mcpToolResult` wrapper to return MCP-standard `content` array instead of bare JSON, fixing LLM client compatibility.
+
 ## 1.30.0 — 2026-06-17
 
 ### Improvements
