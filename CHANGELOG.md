@@ -2,6 +2,26 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.30.0 — 2026-06-17
+
+### Improvements
+
+- **Over-engineering audit (ponytail)**: Removed bot binary (`cmd/bot/`, build targets, Slack env vars), deleted dead `internal/testhelpers/` package (zero imports), and consolidated duplicate rate limiter implementations. Core surface area reduced without affecting functionality.
+- **TODO.md and README.md updated**: Reflect removed bot and testhelpers after ponytail audit.
+
+### Fixes
+
+- **CI workflow permissions**: Added top-level `permissions:` block to prevent default GITHUB_TOKEN over-scoping.
+- **Secrets key derivation**: Replaced incorrect SHA256-based key derivation with proper `hex.DecodeString` for hex-encoded encryption keys.
+- **Rate limit atomicity**: Consolidated `Incr` + `Expire` into a single Redis pipeline call to prevent race conditions in login rate limiting.
+- **Event metadata propagation**: `Metadata.ProjectID` now correctly set in scan creation and schedule event constructors.
+- **Errcheck lint**: Captured `WithMetadata` return value in test helper to satisfy errcheck.
+
+### Docker Images
+
+- `ghcr.io/dyallab/henkaipan-api:1.30.0`
+- `ghcr.io/dyallab/henkaipan-worker:1.30.0`
+
 ## 1.29.1 — 2026-06-16
 
 ### Documentation
