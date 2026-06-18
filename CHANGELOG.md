@@ -2,6 +2,20 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.30.2 — 2026-06-18
+
+### Security
+
+- **Datascope enforcement on vulnerability queries**: `GET /api/vulnerabilities` and `GET /api/vulnerabilities/engine-summary` now filter by team membership. Non-admin users only see vulnerabilities from projects in their teams.
+- **Datascope enforcement on audit logs**: `GET /api/audit-logs` now scopes results to the current user for non-admin roles. Viewers see only their own audit entries.
+- **Datascope enforcement on schedules**: `GET /api/schedules` now filters by team membership. Viewers only see schedules for projects their team owns.
+- **Admin-only write endpoints**: `POST /api/apps`, `POST /api/projects`, `POST /api/projects/bulk`, and `POST /api/projects/bulk-assign` now require admin role. Previously any authenticated user could create resources.
+
+### Fixes
+
+- **Hidden admin UI from viewers**: Compliance nav item, New App, Bulk Add, and New Project buttons are now only visible to admin users. Findings bulk actions and user assignment dropdown guarded behind admin role check.
+- **403 toast on findings page**: Removed spurious API error toast when viewer loads the findings page (was calling admin-only `/api/users`).
+
 ## 1.30.1 — 2026-06-18
 
 ### Fixes
