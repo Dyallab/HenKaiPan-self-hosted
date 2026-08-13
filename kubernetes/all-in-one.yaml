@@ -22,6 +22,13 @@ data:
   REDIS_ADDR: "redis:6379"
   CORS_ALLOWED_ORIGINS: "http://localhost:4321,http://localhost:4322"
   COOKIE_SECURE: "false"
+  # SSO / OIDC (non-sensitive values; set SSO_CLIENT_SECRET in the Secret below)
+  # SSO_ENABLED: "true"
+  # SSO_ISSUER_URL: "https://auth.example.com"
+  # SSO_CLIENT_ID: "henkaipan"
+  # SSO_REDIRECT_URI: "https://henkaipan.example.com/api/auth/sso/callback"
+  # SSO_GROUP_CLAIM: "groups"
+  # SSO_ADMIN_GROUP: "admins"
   OLLAMA_URL: "http://ollama:11434"
   OLLAMA_MODEL: "gemma4:e4b"
   AI_SUMMARY_PROVIDER: "ollama"
@@ -36,6 +43,7 @@ stringData:
   JWT_SECRET: "change-this-to-a-random-string-min-32-chars"
   SECRET_ENCRYPTION_KEY: "change-this-to-a-64-character-hex-string-0123456789abcdef"
   ADMIN_PASS: "change-to-a-uuid-or-random-string"
+  # SSO_CLIENT_SECRET: "your-secure-client-secret"
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -1,0 +1,85 @@
+# Authelia configuration for HenKaiPan SSO (OIDC)
+#
+# Reference setup. Replace example.com with your domain, generate a random
+# hmac_secret and a PKCS#8 RSA private key for jwks, and generate the
+# client_secret hash (Step 3 of the SSO guide):
+#
+#   docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'your-secure-client-secret'
+
+server:
+  address: 'tcp://0.0.0.0:9091'
+
+log:
+  level: info
+
+identity_validation:
+  reset_password:
+    jwt_lifespan: '5 minutes'
+
+authentication:
+  file:
+    path: '/config/users_database.yml'
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: 'henkaipan.example.com'
+      policy: one_factor  # or two_factor for stricter auth
+
+session:
+  cookies:
+    - domain: 'example.com'
+      authelia_url: 'auth.example.com'
+      default_redirection_url: 'henkaipan.example.com'
+
+storage:
+  local:
+    path: '/config/db.sqlite3'
+
+notifier:
+  filesystem:
+    filename: '/config/notification.txt'
+
+identity_providers:
+  oidc:
+    hmac_secret: 'change-me-to-a-random-string'
+    jwks:
+      - key: |
+          -----BEGIN PRIVATE KEY-----
+          # Paste a PKCS#8 RSA private key, indented 10 spaces.
+          # Generate with:
+          #   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048
+          -----END PRIVATE KEY-----
+    lifespans:
+      access_token: '1h'
+      id_token: '1h'
+      refresh_token: '90d'
+    # IMPORTANT: HenKaiPan reads claims ONLY from the signed ID token (no
+    # UserInfo fallback). This policy copies email/groups/preferred_username
+    # into the ID token for the henkaipan client. Without it, login fails with
+    # "SSO provider did not return an email address".
+    claims_policies:
+      henkaipan:
+        id_token:
+          - email
+          - groups
+          - preferred_username
+    clients:
+      - client_id: 'henkaipan'
+        client_name: 'HenKaiPan'
+        client_secret: '$argon2id$v=19$m=65536,t=3,p=4$...'  # see Step 3
+        public: false
+        authorization_policy: 'one_factor'
+        consent_mode: 'implicit'      # skip consent screen
+        claims_policy: 'henkaipan'    # hydrate the ID token with email/groups
+        redirect_uris:
+          - 'https://henkaipan.example.com/api/auth/sso/callback'
+        scopes:
+          - 'openid'
+          - 'email'
+          - 'profile'
+          - 'groups'
+        response_types:
+          - 'code'
+        grant_types:
+          - 'authorization_code'

@@ -1,0 +1,20 @@
+# Authelia users for HenKaiPan SSO
+#
+# Generate password hashes with:
+#   docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'user-password'
+
+users:
+  admin:
+    displayname: 'Admin User'
+    password: '$argon2id$...'  # generate with the command above
+    email: admin@example.com
+    groups:
+      - admins             # ← maps to HenKaiPan admin role (SSO_ADMIN_GROUP)
+      - henkaipan-users
+
+  viewer:
+    displayname: 'Viewer User'
+    password: '$argon2id$...'
+    email: viewer@example.com
+    groups:
+      - henkaipan-users    # ← not in 'admins' → gets viewer role

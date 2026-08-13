@@ -1,0 +1,29 @@
+# SSO with Authelia — Docker Compose override
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.authelia.yml up -d
+#
+# This adds an Authelia OIDC identity provider to the existing HenKaiPan stack.
+# Configure Authelia via ./authelia/configuration.yml and ./authelia/users_database.yml,
+# then add the SSO_* variables to your .env (see .env.example).
+#
+# Full setup guide: https://henkaipan.dyallab.com.ar/docs/sso-authelia/
+
+services:
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    restart: unless-stopped
+    volumes:
+      - ./authelia:/config
+    ports:
+      - "9091:9091"  # keep internal only when behind a reverse proxy
+    environment:
+      - AUTHELIA_TELEMETRY_METRICS_ENABLED=false
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9091/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - henkaipan-net

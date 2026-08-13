@@ -23,6 +23,14 @@ data:
   # Cookie security (set to true behind HTTPS)
   COOKIE_SECURE: "false"
   
+  # SSO / OIDC (non-sensitive values)
+  # SSO_ENABLED: "true"
+  # SSO_ISSUER_URL: "https://auth.example.com"
+  # SSO_CLIENT_ID: "henkaipan"
+  # SSO_REDIRECT_URI: "https://henkaipan.example.com/api/auth/sso/callback"
+  # SSO_GROUP_CLAIM: "groups"
+  # SSO_ADMIN_GROUP: "admins"
+  
   # AI Provider - Ollama (free, self-hosted)
   # Ollama provides AI summaries and remediation
   OLLAMA_URL: "http://ollama:11434"

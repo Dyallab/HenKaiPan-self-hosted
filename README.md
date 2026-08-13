@@ -25,6 +25,7 @@ See [Kubernetes Deployment Guide](https://henkaipan.dyallab.com.ar/docs/self-hos
 | [Backup & Restore](https://henkaipan.dyallab.com.ar/docs/backup/) | Automated and manual backup procedures |
 | [Operations](https://henkaipan.dyallab.com.ar/docs/self-hosted/operations/) | Worker scaling, scanner requirements, troubleshooting |
 | [Kubernetes](https://henkaipan.dyallab.com.ar/docs/self-hosted/kubernetes/) | K8s production deployment |
+| [SSO with Authelia](https://henkaipan.dyallab.com.ar/docs/sso-authelia/) | Single sign-on via OIDC (Authelia, Keycloak, Google, etc.) |
 
 ## Support
 
