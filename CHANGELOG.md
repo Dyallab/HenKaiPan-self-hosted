@@ -2,6 +2,17 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.31.0 — 2026-08-13
+
+### Features
+
+- **SSO (OIDC)**: Added support for single sign-on via any OpenID Connect provider. New `docker-compose.authelia.yml` override plus `authelia/configuration.yml` and `authelia/users_database.yml` reference files for an Authelia IdP. Full guide at [henkaipan.dyallab.com.ar/docs/sso-authelia](https://henkaipan.dyallab.com.ar/docs/sso-authelia/).
+
+### Configuration Changes
+
+- New `.env` variables: `SSO_ENABLED`, `SSO_ISSUER_URL`, `SSO_CLIENT_ID`, `SSO_CLIENT_SECRET`, `SSO_REDIRECT_URI`, `SSO_GROUP_CLAIM`, `SSO_ADMIN_GROUP`.
+- Kubernetes `configmap.yaml` / `secrets.yaml` / `all-in-one.yaml` updated with SSO configuration placeholders.
+
 ## 1.30.2 — 2026-06-18
 
 ### Security
