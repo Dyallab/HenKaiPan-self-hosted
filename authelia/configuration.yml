@@ -15,6 +15,8 @@ log:
 identity_validation:
   reset_password:
     jwt_lifespan: '5 minutes'
+    # Required for signing password-reset JWTs. Use a long random secret.
+    jwt_secret: 'replace-with-a-long-random-secret'
 
 authentication:
   file:
@@ -27,12 +29,16 @@ access_control:
       policy: one_factor  # or two_factor for stricter auth
 
 session:
+  # Required for signing session cookies. Use a long random secret.
+  secret: 'replace-with-a-long-random-secret'
   cookies:
     - domain: 'example.com'
-      authelia_url: 'auth.example.com'
-      default_redirection_url: 'henkaipan.example.com'
+      authelia_url: 'https://auth.example.com'
+      default_redirection_url: 'https://henkaipan.example.com'
 
 storage:
+  # Required for encrypting session storage. Use a long random secret.
+  encryption_key: 'replace-with-a-long-random-secret'
   local:
     path: '/config/db.sqlite3'
 
@@ -42,13 +48,17 @@ notifier:
 
 identity_providers:
   oidc:
-    hmac_secret: 'change-me-to-a-random-string'
+    # Random alphanumeric secret, at least 64 characters. Generate with:
+    #   openssl rand -base64 64
+    hmac_secret: 'replace-with-at-least-64-random-characters'
     jwks:
+      # RSA private key (PKCS#8 PEM), at least 2048 bits, indented 10 spaces.
+      # Generate with:
+      #   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 \
+      #     -outform PEM -out authelia-oidc.pem
       - key: |
           -----BEGIN PRIVATE KEY-----
-          # Paste a PKCS#8 RSA private key, indented 10 spaces.
-          # Generate with:
-          #   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048
+          replace-with-PKCS8-key-content-indented-10-spaces
           -----END PRIVATE KEY-----
     lifespans:
       access_token: '1h'
@@ -62,6 +72,7 @@ identity_providers:
       henkaipan:
         id_token:
           - email
+          - email_verified
           - groups
           - preferred_username
     clients:

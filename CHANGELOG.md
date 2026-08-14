@@ -2,6 +2,20 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.31.1 — 2026-08-14
+
+### Security
+
+- **SSO account takeover prevention**: Removed username-conflict account linking, so an SSO identity can no longer attach to an existing account via a matching username. SSO account linking now requires a verified, matching email address.
+- **SSO state cookie signed with HMAC**: The OIDC state cookie is now signed and verified, preventing tampering with the SSO login flow.
+
+### Fixes
+
+- **SSO identity schema hardened**: `sso_provider` and `sso_subject` must be present as a complete pair (check constraint), and the unique index only covers complete pairs. Fixed a NULL scan issue by reading the nullable SSO columns as `*string`.
+- **SSO fields hidden from User JSON**: SSO identifiers are no longer serialized in user responses.
+- **Migration 047 runs outside a transaction**: `CREATE INDEX CONCURRENTLY` now runs via a no-transaction migration path, and the migration is idempotent.
+- **Authelia reference config corrected**: Added required secrets (`jwt_secret`, session `secret`, `storage.encryption_key`), HTTPS URLs for Authelia and the default redirect, `email_verified` in the ID token claims, and corrected the loopback port binding. The docs now reflect that SSO role is re-synchronized on every login.
+
 ## 1.31.0 — 2026-08-13
 
 ### Features
