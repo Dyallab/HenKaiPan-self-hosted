@@ -2,6 +2,21 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.32.0 — 2026-08-15
+
+### Security
+
+- **Reduced public endpoint fingerprinting**: `/api/config/status`, `/api/version`, and `/api/version/check` now require authentication. `/api/health` returns only a minimal status publicly; the detailed DB/Redis/worker/disk health moved to `/api/health/detailed` (authenticated). A new public `/api/auth/sso/status` exposes only whether SSO is enabled for the login page.
+
+### Features
+
+- **SSO button always visible**: The login page now always shows the SSO button. When SSO is disabled, clicking it shows an informational toast instead of silently hiding the button.
+
+### Fixes
+
+- **Removed sessionStorage role checks**: The dashboard no longer stores the user role in sessionStorage; it uses the cached auth helpers. This prevents UI state from drifting out of sync with the backend role.
+- **Removed legacy "Clear Data" button**: The settings page no longer offers a misleading "Clear All Local Data" action — sign out already clears the session cookie, and the only remaining local key was a version notification flag.
+
 ## 1.31.2 — 2026-08-15
 
 ### Fixes
