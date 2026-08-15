@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.31.2 — 2026-08-15
+
+### Fixes
+
+- **Migration 047 now applies correctly**: Fixed the no-transaction migration runner to execute each SQL statement separately. pgx's simple protocol was wrapping the whole multi-statement script in an implicit transaction, which made `CREATE INDEX CONCURRENTLY` fail with `SQLSTATE 25001` even though the migration was marked `-- NO TRANSACTION`.
+
 ## 1.31.1 — 2026-08-14
 
 ### Security
