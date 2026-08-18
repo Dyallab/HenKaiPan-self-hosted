@@ -2,6 +2,22 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.33.0 — 2026-08-17
+
+### Features
+
+- **AI Provider & Model Status Dashboard**: Added an AI Providers overview in Settings showing the active provider (OpenRouter, Cloudflare, Ollama) and configured model per task (Remediation, Summary, Validation).
+- **OpenRouter Credit & Budget Tracking**: Added `GET /api/ai/openrouter/status` (admin-only) and a Settings card displaying key usage, monthly spend, credit limit, and remaining budget for the configured OpenRouter API key.
+
+### Fixes
+
+- **Asset Inventory Standalone Projects**: Standalone projects (not assigned to an application) are now included in the inventory table and summary count cards, preventing count mismatches with the vulnerability engine summaries.
+- **Repository Link in Inventory**: Fixed repository URLs and coverage status indicators in the inventory table to derive from `repo_url` rather than legacy missing identifier fields.
+
+### Security
+
+- **Worker Seccomp Profile**: Added `openat2` and `faccessat2` to `seccomp-worker.json` allowlist for compatibility with modern container runtimes (`runc` / `go-pathrs`) without disabling seccomp restrictions.
+
 ## 1.32.0 — 2026-08-15
 
 ### Security
