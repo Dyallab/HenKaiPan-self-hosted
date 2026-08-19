@@ -2,6 +2,19 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.34.0 — 2026-08-19
+
+### Features
+
+- **Disable/Enable Users**: Added an `is_active` flag to user accounts. Disabled users are blocked from logging in via password authentication and SSO, and their API keys are immediately rejected. Toggling the flag invalidates existing sessions (token version bump). Disabled users receive an email notification and an in-app security event. The Settings admin page now shows a Status column with a toggle button per user.
+
+### Fixes
+
+- **SARIF parser ruleId fix**: Fixed the JSON tag `rule_id` → `ruleId` in the SARIF parser to match the SARIF specification. Semgrep, Trivy, and other SARIF-based scanners were producing findings with empty rule IDs, causing vulnerability correlation (`ComputeVulnUID`) to fail silently. Updated test fixtures (semgrep, trivy).
+- **BackfillVulnerabilities infinite loop**: Added a `linkedThisRound` counter per batch — if a full batch (500 findings) has zero linkable findings, the backfill stops with a warning instead of looping forever on unprocessable findings.
+- **Non-blocking vulnerability backfill**: The worker now runs `BackfillVulnerabilities` in a background goroutine at startup, so the asynq server starts immediately and scans are not blocked by a slow or stuck backfill.
+- **statement_timeout safety net**: Added an `AfterConnect` hook on the Postgres connection pool that sets `statement_timeout = '5min'` per connection, preventing runaway queries from hanging indefinitely.
+
 ## 1.33.0 — 2026-08-17
 
 ### Features
