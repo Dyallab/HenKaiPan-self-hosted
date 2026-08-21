@@ -41,3 +41,9 @@ data:
   # SMTP_HOST: "smtp.example.com"
   # SMTP_PORT: "587"
   # EMAIL_FROM: "aspm@example.com"
+
+  # Optional: Telemetry (anonymous usage stats, enabled by default)
+  # Self-hosted defaults to tier=self-hosted + a random anonymous instance_id.
+  # HENKAIPAN_TELEMETRY_ENABLED: "true"
+  # HENKAIPAN_TIER: "self-hosted"
+  # HENKAIPAN_INSTANCE_ID: ""            # unset = random anonymous UUID
