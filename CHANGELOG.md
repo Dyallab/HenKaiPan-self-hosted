@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.35.0 — 2026-08-23
+
+### Features
+
+- **@username mentions in finding comments → email + in-app notifications**: Posting a comment on a finding that mentions a team member (e.g. `@alice`) now notifies that user via the `email:send` queue and creates an in-app notification with an SSE push. Self-mentions, inactive users, and unknown usernames are skipped without breaking the comment; the finding detail UI already advertised this behavior, which previously did not exist.
+
 ## 1.34.0 — 2026-08-19
 
 ### Features
