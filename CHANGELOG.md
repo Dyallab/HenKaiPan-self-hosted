@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.36.0 — 2026-08-24
+
+### Features
+
+- **API Token Rotation**: Added `POST /api/v1/tokens/{id}/rotate` for in-place token secret rotation. The old secret is revoked immediately (its bcrypt hash is overwritten) while preserving the token's name and project scope. The new secret is shown only once. Only the token creator can rotate. The Settings → API Tokens panel now includes a "Rotate" button next to each token. Closes [#29](https://github.com/Dyallab/HenKaiPan/issues/29).
+
 ## 1.35.0 — 2026-08-23
 
 ### Features
