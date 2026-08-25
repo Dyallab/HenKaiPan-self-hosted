@@ -2,6 +2,20 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.37.0 — 2026-08-25
+
+### Features
+
+- **Stateless MCP server (protocol 2026-07-28)**: Migrated the MCP server from the legacy stateful `2025-03-26` protocol to the modern, stateless `2026-07-28` spec. The `initialize` handshake, `MCP-Session-Id` sessions, and the in-memory session registry are removed entirely — every request is self-contained and authenticated solely by `X-API-Key`. Adds `server/discover`, per-request protocol version negotiation (`MCP-Protocol-Version` header + `_meta`), and `resultType`/caching fields on results. Closes [#68](https://github.com/Dyallab/HenKaiPan/issues/68).
+
+### Security
+
+- **MCP DNS-rebinding protection**: The MCP endpoint now validates the `Origin` header (403 on invalid origin) and enforces the required `Mcp-Method`/`Mcp-Name` transport headers (including Base64 sentinel decoding) to prevent request-smuggling across header/body sources of truth.
+
+### Breaking Changes
+
+- **Modern-only MCP**: Clients pinned to a pre-`2026-07-28` MCP SDK that rely on the `initialize` handshake will receive `UnsupportedProtocolVersionError` (`-32022`) and must update to a client that speaks the stateless `2026-07-28` protocol (Claude, Cursor, OpenCode all support it).
+
 ## 1.36.0 — 2026-08-24
 
 ### Features
