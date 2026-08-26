@@ -11,6 +11,12 @@ test "${DEBUG:-}" && set -x
 # and prints next steps.
 #
 # Inspired by: https://github.com/getsentry/self-hosted
+#
+# License: MIT (see LICENSE). This self-hosted edition is free
+# and unrestricted. The HenKaiPan app images are built from the
+# HenKaiPan-app repo (Business Source License 1.1).
+# For managed Cloud / Enterprise hosting, contact
+# henkaipan@dyallab.com.ar.
 
 # Override any user-supplied umask that could cause problems
 umask 002
