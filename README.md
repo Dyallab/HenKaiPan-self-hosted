@@ -32,3 +32,14 @@ See [Kubernetes Deployment Guide](https://henkaipan.dyallab.com.ar/docs/self-hos
 - **Documentation**: https://henkaipan.dyallab.com.ar/docs/
 - **Email**: henkaipan@dyallab.com.ar
 - **GitHub Issues**: [Report bugs or feature requests](https://github.com/Dyallab/HenKaiPan-self-hosted/issues)
+
+## License
+
+This repository (deployment config, installer scripts, and documentation) is
+released under the **MIT License** — see [LICENSE](LICENSE).
+
+The HenKaiPan application images referenced here are built from the
+[HenKaiPan-app](https://github.com/Dyallab/HenKaiPan) codebase, which is
+licensed under the **Business Source License 1.1**. Self-hosted use of the
+software is free and unrestricted. For Cloud / Enterprise hosting managed by
+Dyallab, contact henkaipan@dyallab.com.ar.
