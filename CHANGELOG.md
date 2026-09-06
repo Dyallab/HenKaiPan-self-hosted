@@ -2,6 +2,20 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.39.0 — 2026-09-06
+
+### Features
+
+- **MCP standard-client compatibility**: the MCP server now answers the stateless `initialize` handshake (echoing the client's protocol version, no session ever minted) and serves a standalone SSE stream (`GET`), so standard MCP clients that expect an `initialize` round-trip work out of the box. Version negotiation is validated per request — unknown versions, header/body conflicts, and `_meta` mismatches are rejected; the legacy `2024-11-05` version is no longer advertised. Closes [#74](https://github.com/Dyallab/HenKaiPan/issues/74).
+
+### Documentation
+
+- **Horizontal scaling for API replicas** (via `@dyallab/docs` v1.21.0): new Kubernetes guide section documenting that API replicas are interchangeable with no sticky sessions — per-request auth against Postgres, Redis-backed rate limiting, SSE fan-out over Redis pub/sub, fully stateless MCP, advisory-locked migrations — plus a cross-link from the MCP integration doc.
+
+### Improvements
+
+- CI: security dogfood scan job disabled (production host unreachable; to be replaced by a CLI-driven check).
+
 ## 1.38.0 — 2026-09-06
 
 ### Release & Distribution
