@@ -2,6 +2,16 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.38.0 — 2026-09-06
+
+### Release & Distribution
+
+- **Licensing clarified**: the self-hosted distribution is now explicitly MIT licensed (`LICENSE` + legal notice in `README.md`, ref [#67](https://github.com/Dyallab/HenKaiPan/issues/67)). Note that the application code it pulls as Docker images is BUSL 1.1 since v1.38.0 (converts to MIT 4 years after first public release) — self-hosted use remains free and unrestricted.
+
+### Features
+
+- **Threat Intel MVP F1+F2 — inventory matching, KEV/OSV feed, exposures dashboard**: new `project_dependencies` inventory with manifest parsers (`package.json`, `requirements.txt`, `go.mod`, `Cargo.lock`), OSV batch vulnerability matching, CISA KEV fetcher with notify + silent rescan, and a `GET /api/threats/exposures` endpoint surfaced in a new Threats dashboard with dual badges. Runs on a 6h `threat:sync` scheduler. Requires migrations `049_threat_intel_mvp` + `050_threat_hits_unique` (applied automatically on API start). Closes [#64](https://github.com/Dyallab/HenKaiPan/issues/64) (F1+F2).
+
 ## 1.37.0 — 2026-08-25
 
 ### Features
