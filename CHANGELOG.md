@@ -2,6 +2,12 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.39.1 — 2026-09-15
+
+### Fixes
+
+- **Migration 047 re-runnable**: `047_sso_config.sql` (marked `NO TRANSACTION`) now guards `ADD CONSTRAINT users_sso_pair_check` with a `DO` block on `pg_constraint`. Previously, a first attempt that died after adding the constraint but before recording the version left every retry failing with `42710`, bricking startup on fresh deploys. Upgrade action: none — affected instances recover automatically on next boot once the version row is repaired (or start clean).
+
 ## 1.39.0 — 2026-09-06
 
 ### Features
