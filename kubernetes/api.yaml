@@ -17,9 +17,10 @@ spec:
       labels:
         app: henkaipan-api
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: api
-          image: ghcr.io/dyallab/henkaipan-api:latest
+          image: ghcr.io/dyallab/henkaipan-api:1.39.2
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -47,9 +48,11 @@ spec:
             requests:
               memory: "512Mi"
               cpu: "250m"
+              ephemeral-storage: "500Mi"
             limits:
               memory: "2Gi"
               cpu: "1000m"
+              ephemeral-storage: "1Gi"
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000

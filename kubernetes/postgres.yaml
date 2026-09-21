@@ -19,6 +19,7 @@ spec:
       labels:
         app: postgres
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: postgres
           image: postgres:17-alpine
@@ -55,9 +56,11 @@ spec:
             requests:
               memory: "512Mi"
               cpu: "250m"
+              ephemeral-storage: "500Mi"
             limits:
               memory: "2Gi"
               cpu: "1000m"
+              ephemeral-storage: "1Gi"
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:

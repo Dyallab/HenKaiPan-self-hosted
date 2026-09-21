@@ -2,6 +2,19 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.39.2 — 2026-09-21
+
+### Security
+
+- **Kubernetes hardening**: all pods set `automountServiceAccountToken: false` (no workload talks to the K8s API); every container declares `ephemeral-storage` requests and limits. Upgrade action: none — `kubectl apply` the updated manifests.
+- **Pinned K8s images**: `henkaipan-api`/`henkaipan-worker` manifests use `:1.39.2` instead of `:latest` for reproducible deploys. Upgrade action: if you pinned manifests locally, update the tag to `1.39.2`.
+- **Ollama installer download**: `curl` enforces `--proto "=https"` and the `wget` fallback disables redirects (`--max-redirect=0`) against HTTPS-downgrade attacks.
+
+### Fixes
+
+- **Shell robustness (`install.sh`, `scripts/backup.sh`)**: `test`/`[` conditionals replaced with `[[ ]]`; backup errors now go to stderr; removed unused `db_url_var`.
+- **SonarQube triage**: 36 S6907 findings marked false positive (sharing `henkaipan-config` via `envFrom` is by design); the local display URL (S5332) is annotated `NOSONAR`.
+
 ## 1.39.1 — 2026-09-15
 
 ### Fixes

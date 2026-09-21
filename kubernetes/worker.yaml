@@ -17,9 +17,10 @@ spec:
       labels:
         app: henkaipan-worker
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: worker
-          image: ghcr.io/dyallab/henkaipan-worker:latest
+          image: ghcr.io/dyallab/henkaipan-worker:1.39.2
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
@@ -35,9 +36,11 @@ spec:
             requests:
               memory: "1Gi"
               cpu: "500m"
+              ephemeral-storage: "1Gi"
             limits:
               memory: "4Gi"
               cpu: "2000m"
+              ephemeral-storage: "2Gi"
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -eEuo pipefail
-test "${DEBUG:-}" && set -x
+[[ -n "${DEBUG:-}" ]] && set -x
 
 # ──────────────────────────────────────────────────────────
 # HenKaiPan ASPM — Self-Hosted Installer
@@ -24,7 +24,7 @@ umask 002
 # Error handling - cleanup on exit
 cleanup() {
   local exit_code=$?
-  if [ $exit_code -ne 0 ]; then
+  if [[ $exit_code -ne 0 ]]; then
     echo ""
     fail "Installation failed with exit code $exit_code"
     echo "  Check logs above for details."
@@ -46,6 +46,9 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
+
+# Blank row of the summary panel (shared constant to avoid duplicating the literal)
+BOX_BLANK="  │                                                     │"
 
 ok()   { echo -e " ${GREEN}✓${NC} $1"; }
 warn() { echo -e " ${YELLOW}⚠${NC} $1"; }
@@ -96,7 +99,7 @@ ok "Docker Compose found: $(docker compose version 2>/dev/null | head -1)"
 
 # Minimum Docker Compose v2.24
 COMPOSE_VERSION=$(docker compose version --short 2>/dev/null | sed 's/v//')
-if [ "$(printf '%s\n' "2.24" "$COMPOSE_VERSION" | sort -V | head -1)" != "2.24" ]; then
+if [[ "$(printf '%s\n' "2.24" "$COMPOSE_VERSION" | sort -V | head -1)" != "2.24" ]]; then
   warn "Docker Compose $COMPOSE_VERSION may be too old. v2.24+ recommended for healthcheck support."
 else
   ok "Docker Compose $COMPOSE_VERSION (v2.24+ OK)"
@@ -115,18 +118,18 @@ fi
 # Check RAM (Linux only)
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   TOTAL_RAM=$(awk '/MemTotal/ {printf "%.0f", $2/1024/1024}' /proc/meminfo 2>/dev/null || echo 0)
-  if [ "$TOTAL_RAM" -gt 0 ] && [ "$TOTAL_RAM" -lt 8 ]; then
+  if [[ "$TOTAL_RAM" -gt 0 ]] && [[ "$TOTAL_RAM" -lt 8 ]]; then
     fail "System has only ${TOTAL_RAM} GB RAM. 8 GB minimum required (16 GB recommended)."
-  elif [ "$TOTAL_RAM" -gt 0 ]; then
+  elif [[ "$TOTAL_RAM" -gt 0 ]]; then
     ok "${TOTAL_RAM} GB RAM detected"
   fi
 fi
 
 # Check disk space
 AVAIL_DISK=$(df -BG --output=avail /var/lib/docker 2>/dev/null | tail -1 | tr -d 'G' || echo 0)
-if [ "$AVAIL_DISK" -gt 0 ] && [ "$AVAIL_DISK" -lt 30 ]; then
+if [[ "$AVAIL_DISK" -gt 0 ]] && [[ "$AVAIL_DISK" -lt 30 ]]; then
   fail "Only ${AVAIL_DISK} GB free on Docker storage. 30 GB minimum required."
-elif [ "$AVAIL_DISK" -gt 0 ]; then
+elif [[ "$AVAIL_DISK" -gt 0 ]]; then
   ok "${AVAIL_DISK} GB free disk space"
 fi
 
@@ -147,7 +150,7 @@ esac
 
 echo ""
 
-if [ "$SKIP_OLLAMA" = false ]; then
+if [[ "$SKIP_OLLAMA" = false ]]; then
 
 # ── Ollama Installation (FREE, Self-Hosted AI) ────────────
 
@@ -160,9 +163,9 @@ if command -v ollama &>/dev/null; then
 else
   info "Ollama not found. Installing Ollama on the host…"
   if command -v curl &>/dev/null; then
-    curl -fsSL https://ollama.com/install.sh | sh
+    curl --proto "=https" -fsSL https://ollama.com/install.sh | sh
   elif command -v wget &>/dev/null; then
-    wget -qO- https://ollama.com/install.sh | sh
+    wget --max-redirect=0 -qO- https://ollama.com/install.sh | sh
   else
     fail "Neither curl nor wget found. Install curl first: sudo apt install curl (Debian) or sudo yum install curl (RHEL)."
   fi
@@ -207,7 +210,7 @@ fi
 
 # ── Configuration ────────────────────────────────────────
 
-if [ -f ".env" ]; then
+if [[ -f ".env" ]]; then
   info ".env already exists — skipping configuration."
 else
   info "Generating .env file..."
@@ -220,7 +223,7 @@ else
 
   cp .env.example .env
 
-  if [ "$SKIP_OLLAMA" = false ]; then
+  if [[ "$SKIP_OLLAMA" = false ]]; then
     # Enable Ollama with host.docker.internal so containers reach the host
     if [[ "$OSTYPE" == "darwin"* ]]; then
       sed -i '' "s|# OLLAMA_URL=.*|OLLAMA_URL=http://host.docker.internal:11434|" .env
@@ -289,18 +292,18 @@ ADMIN_DISPLAY="${ADMIN_DISPLAY:-admin}"
 
 echo "  ┌─────────────────────────────────────────────────────┐"
 echo "  │  ${GREEN}HenKaiPan is up and running!${NC}                              │"
-echo "  │                                                     │"
-echo "  │  Open:    ${CYAN}http://${HOST_IP}:8080${NC}                      │"
+echo "$BOX_BLANK"
+echo "  │  Open:    ${CYAN}http://${HOST_IP}:8080${NC}                      │" # NOSONAR -- S5332: local LAN display URL; production section below mandates HTTPS reverse proxy
 echo "  │  Login:   admin / ${YELLOW}${ADMIN_DISPLAY}${NC}                       │"
-echo "  │                                                     │"
+echo "$BOX_BLANK"
 echo "  │  ${YELLOW}⚠ To change password: edit ADMIN_PASS in .env and restart.${NC} │"
-echo "  │                                                     │"
+echo "$BOX_BLANK"
 echo "  │  For production:                                    │"
 echo "  │    - Set COOKIE_SECURE=true behind HTTPS             │"
 echo "  │    - Configure reverse proxy (nginx/caddy) with TLS  │"
 echo "  │    - Set up database backups (see docs/)             │"
 echo "  │    - Review security checklist in README.md          │"
-echo "  │                                                     │"
+echo "$BOX_BLANK"
 echo "  │  Documentation: https://henkaipan.dyallab.com.ar    │"
 echo "  └─────────────────────────────────────────────────────┘"
 echo ""

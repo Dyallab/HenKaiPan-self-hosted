@@ -62,6 +62,7 @@ spec:
       labels:
         app: postgres
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: postgres
           image: postgres:17-alpine
@@ -91,9 +92,11 @@ spec:
             requests:
               memory: "512Mi"
               cpu: "250m"
+              ephemeral-storage: "500Mi"
             limits:
               memory: "2Gi"
               cpu: "1000m"
+              ephemeral-storage: "1Gi"
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
@@ -139,6 +142,7 @@ spec:
       labels:
         app: redis
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: redis
           image: redis:8-alpine
@@ -158,9 +162,11 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "100m"
+              ephemeral-storage: "100Mi"
             limits:
               memory: "512Mi"
               cpu: "500m"
+              ephemeral-storage: "500Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -189,9 +195,10 @@ spec:
       labels:
         app: henkaipan-api
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: api
-          image: ghcr.io/dyallab/henkaipan-api:latest
+          image: ghcr.io/dyallab/henkaipan-api:1.39.2
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -219,9 +226,11 @@ spec:
             requests:
               memory: "512Mi"
               cpu: "250m"
+              ephemeral-storage: "500Mi"
             limits:
               memory: "2Gi"
               cpu: "1000m"
+              ephemeral-storage: "1Gi"
 ---
 apiVersion: v1
 kind: Service
@@ -257,9 +266,10 @@ spec:
       labels:
         app: henkaipan-worker
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: worker
-          image: ghcr.io/dyallab/henkaipan-worker:latest
+          image: ghcr.io/dyallab/henkaipan-worker:1.39.2
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
@@ -273,9 +283,11 @@ spec:
             requests:
               memory: "1Gi"
               cpu: "500m"
+              ephemeral-storage: "1Gi"
             limits:
               memory: "4Gi"
               cpu: "2000m"
+              ephemeral-storage: "2Gi"
       volumes:
         - name: tmp
           emptyDir: {}
