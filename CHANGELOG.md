@@ -2,6 +2,16 @@
 
 All notable changes to the self-hosted distribution are documented here.
 
+## 1.39.3 — 2026-09-26
+
+### Security
+
+- **API image runs as non-root**: `docker/api.Dockerfile` sets `api:api` (uid 1000) with writable `WORKDIR /home/api`, mirroring the worker image and matching the K8s `runAsNonRoot: 1000` policy already enforced in `kubernetes/api.yaml`. Upgrade action: none for compose/K8s defaults (no volumes on api); if you bind-mount custom paths into the api container, `chown 1000:1000` them.
+- **Pinned Python scanners**: worker installs `semgrep==1.178.0` + `checkov==3.3.19` via `ARG` versions with `pip --only-binary :all:` (no `setup.py` execution); all `curl` downloads enforce `--proto '=https' --tlsv1.2`.
+- **PATH hardening**: git subprocesses (token repo validation, scan clone/fetch/checkout, snippet enrich) resolve the binary via `exec.LookPath` and fail closed when missing.
+- **Toast IDs via CSPRNG**: frontend uses `crypto.getRandomValues` instead of `Math.random`.
+- **Pinned K8s images**: manifests use `:1.39.3` instead of `:1.39.2` for reproducible deploys. Upgrade action: if you pinned manifests locally, update the tag to `1.39.3`.
+
 ## 1.39.2 — 2026-09-21
 
 ### Security

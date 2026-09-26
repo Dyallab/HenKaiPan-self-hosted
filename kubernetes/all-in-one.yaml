@@ -198,7 +198,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: api
-          image: ghcr.io/dyallab/henkaipan-api:1.39.2
+          image: ghcr.io/dyallab/henkaipan-api:1.39.3
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -269,7 +269,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: worker
-          image: ghcr.io/dyallab/henkaipan-worker:1.39.2
+          image: ghcr.io/dyallab/henkaipan-worker:1.39.3
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
